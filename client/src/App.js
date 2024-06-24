@@ -25,7 +25,7 @@ function App() {
       <Router>
         <Routes>
           <Route element={withLayout(Home)()} path="/" />
-          <Route element={withLayout(AboutPage)()} path="/about-us" />
+          <Route element={withLayout(AboutPage)()} path="/about" />
           <Route element={withLayout(FaqPage)()} path="/faq" />
 
           { /*Auth Routes*/ }

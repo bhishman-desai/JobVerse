@@ -5,7 +5,7 @@ const Footer = () => {
   return (
     <Box p={4} mt="auto">
       <Flex justify="center" align="center">
-        <Text>© 2024 Company Name</Text>
+        <Text>© 2024 Jobverse</Text>
       </Flex>
     </Box>
   );
