@@ -218,7 +218,7 @@ const Faq = () => {
           <h2>
             <AccordionButton>
               <Box flex="1" textAlign="left" fontWeight="semibold">
-                How do I delete a job listing
+                How do I delete a job listing?
               </Box>
               <AccordionIcon />
             </AccordionButton>
