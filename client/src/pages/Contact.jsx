@@ -15,10 +15,10 @@ import {
   InputGroup,
   InputLeftElement,
   Textarea,
+  useToast,
 } from "@chakra-ui/react";
 import { BsPerson } from "react-icons/bs";
-import { MdOutlineEmail, MdLocationOn, MdPhone } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { MdOutlineEmail, MdLocationOn } from "react-icons/md";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -28,9 +28,10 @@ const Contact = () => {
   });
 
   const [errors, setErrors] = useState({});
+  const toast = useToast();
 
   const validateName = (name) => {
-    return /^[A-Za-z]+$/.test(name);
+    return /^[A-Za-z\s]+$/.test(name);
   };
 
   const validateEmail = (email) => {
@@ -45,7 +46,7 @@ const Contact = () => {
       newErrors.name = "Name is required";
       valid = false;
     } else if (!validateName(formData.name)) {
-      newErrors.name = "Name should only contain letters";
+      newErrors.name = "Name should contain only letters and spaces";
       valid = false;
     }
 
@@ -71,6 +72,15 @@ const Contact = () => {
       console.log("Form data:", formData);
       setFormData({ name: "", email: "", message: "" });
       setErrors({});
+      toast({
+        title: "Message Sent.",
+        description: "We will get back to you soon.",
+        variant: "subtle",
+        status: "success",
+        duration: 5000,
+        position: "top-right",
+        isClosable: true,
+      });
     }
   };
 
@@ -100,21 +110,11 @@ const Contact = () => {
                         width="200px"
                         variant="ghost"
                         _hover={{ border: "2px solid #1C6FEB" }}
-                        leftIcon={<MdPhone color="#1970F1" size="20px" />}
-                      >
-                        +1-9999999999
-                      </Button>
-                      <Button
-                        size="md"
-                        height="48px"
-                        width="200px"
-                        variant="ghost"
-                        _hover={{ border: "2px solid #1C6FEB" }}
                         leftIcon={
                           <MdOutlineEmail color="#1970F1" size="20px" />
                         }
                       >
-                        hello@abc.com
+                        hello@jobverse.com
                       </Button>
                       <Button
                         size="md"
@@ -128,9 +128,6 @@ const Contact = () => {
                       </Button>
                     </VStack>
                   </Box>
-                  <Link to={"/"}>
-                    <Button> Go back!</Button>
-                  </Link>
                 </Box>
               </WrapItem>
               <WrapItem>

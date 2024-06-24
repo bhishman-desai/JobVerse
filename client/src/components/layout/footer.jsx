@@ -14,7 +14,7 @@ const Footer = () => {
         </Link>
         <Link to={"/faq"}>
           <Text paddingLeft={3} _hover={{ textDecoration: "underline" }}>
-            Faq
+            FAQ
           </Text>
         </Link>
       </Flex>
