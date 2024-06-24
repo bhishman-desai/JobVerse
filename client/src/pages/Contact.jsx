@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Container,
   Flex,
@@ -16,11 +16,64 @@ import {
   InputLeftElement,
   Textarea,
 } from "@chakra-ui/react";
-import { MdPhone, MdEmail, MdLocationOn, MdOutlineEmail } from "react-icons/md";
 import { BsPerson } from "react-icons/bs";
+import { MdOutlineEmail, MdLocationOn, MdPhone } from "react-icons/md";
 import { Link } from "react-router-dom";
 
 const Contact = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+
+  const [errors, setErrors] = useState({});
+
+  const validateName = (name) => {
+    return /^[A-Za-z]+$/.test(name);
+  };
+
+  const validateEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  const validateForm = () => {
+    let valid = true;
+    const newErrors = {};
+
+    if (formData.name.trim() === "") {
+      newErrors.name = "Name is required";
+      valid = false;
+    } else if (!validateName(formData.name)) {
+      newErrors.name = "Name should only contain letters";
+      valid = false;
+    }
+
+    if (formData.email.trim() === "") {
+      newErrors.email = "Email is required";
+      valid = false;
+    } else if (!validateEmail(formData.email)) {
+      newErrors.email = "Invalid email format";
+      valid = false;
+    }
+
+    if (formData.message.trim() === "") {
+      newErrors.message = "Message is required";
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
+  };
+
+  const handleSubmit = () => {
+    if (validateForm()) {
+      console.log("Form data:", formData);
+      setFormData({ name: "", email: "", message: "" });
+      setErrors({});
+    }
+  };
+
   return (
     <Container maxW="full" mt={0} centerContent overflow="hidden">
       <Flex>
@@ -57,7 +110,9 @@ const Contact = () => {
                         width="200px"
                         variant="ghost"
                         _hover={{ border: "2px solid #1C6FEB" }}
-                        leftIcon={<MdEmail color="#1970F1" size="20px" />}
+                        leftIcon={
+                          <MdOutlineEmail color="#1970F1" size="20px" />
+                        }
                       >
                         hello@abc.com
                       </Button>
@@ -88,19 +143,42 @@ const Contact = () => {
                           <InputLeftElement pointerEvents="none">
                             <BsPerson color="gray.800" />
                           </InputLeftElement>
-                          <Input type="text" placeholder="Name" size="md" />
+                          <Input
+                            type="text"
+                            placeholder="Name"
+                            size="md"
+                            value={formData.name}
+                            onChange={(e) =>
+                              setFormData({ ...formData, name: e.target.value })
+                            }
+                          />
                         </InputGroup>
+                        {errors.name && <Text color="red">{errors.name}</Text>}
                       </FormControl>
-                      <FormControl id="name">
+                      <FormControl id="email">
                         <FormLabel>Your Mail</FormLabel>
                         <InputGroup borderColor="#E0E1E7">
                           <InputLeftElement pointerEvents="none">
                             <MdOutlineEmail color="gray.800" />
                           </InputLeftElement>
-                          <Input type="text" placeholder="Email" size="md" />
+                          <Input
+                            type="text"
+                            placeholder="Email"
+                            size="md"
+                            value={formData.email}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                email: e.target.value,
+                              })
+                            }
+                          />
                         </InputGroup>
+                        {errors.email && (
+                          <Text color="red">{errors.email}</Text>
+                        )}
                       </FormControl>
-                      <FormControl id="name">
+                      <FormControl id="message">
                         <FormLabel>Message</FormLabel>
                         <Textarea
                           borderColor="gray.300"
@@ -108,14 +186,25 @@ const Contact = () => {
                             borderRadius: "gray.300",
                           }}
                           placeholder="Enter your message here!"
+                          value={formData.message}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              message: e.target.value,
+                            })
+                          }
                         />
+                        {errors.message && (
+                          <Text color="red">{errors.message}</Text>
+                        )}
                       </FormControl>
-                      <FormControl id="name" float="right">
+                      <FormControl id="submit" float="right">
                         <Button
                           variant="solid"
                           bg="#0D74FF"
                           color="white"
                           _hover={{}}
+                          onClick={handleSubmit}
                         >
                           Send Message
                         </Button>
