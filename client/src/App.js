@@ -5,7 +5,6 @@ import withLayout from "./components/layout/withLayout";
 import "./App.css";
 
 const Home = lazy(() => import("./pages/Home"));
-const AboutPage = lazy(() => import("./pages/About"));
 const FaqPage = lazy(() => import("./pages/Faq"));
 const ContactPage = lazy(() => import("./pages/Contact"));
 
@@ -26,7 +25,7 @@ function App() {
       <Router>
         <Routes>
           <Route element={withLayout(Home)()} path="/" />
-          <Route element={withLayout(AboutPage)()} path="/about-us" />
+          <Route element={withLayout(PageNotFoundPage)()} path="/about" />
           <Route element={withLayout(FaqPage)()} path="/faq" />
           <Route element={withLayout(ContactPage)()} path="/contact-us" />
 
