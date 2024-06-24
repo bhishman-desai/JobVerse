@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Flex, Link, IconButton, Drawer, DrawerBody, DrawerHeader, DrawerOverlay, DrawerContent, DrawerCloseButton, useDisclosure, Image } from '@chakra-ui/react';
+import { Box, Flex, Link, IconButton, Drawer, DrawerBody, DrawerHeader, DrawerOverlay, DrawerContent, DrawerCloseButton, useDisclosure, Image, Button } from '@chakra-ui/react';
 import { HamburgerIcon } from '@chakra-ui/icons';
 import { NavLink, useLocation } from 'react-router-dom';
 import logo from '../../assets/Jobverse.jpeg';
@@ -12,7 +12,7 @@ const Navbar = () => {
         { name: "Home", path: "/" },
         { name: "Faq", path: "/faq" },
         { name: "About", path: "/about" },
-        { name: "Contact", path: "/contact" }
+        { name: "Contact us", path: "/contact-us" }
     ];
 
     const handleSelect = (link) => {
@@ -24,7 +24,7 @@ const Navbar = () => {
         if (currentLink) {
             handleSelect(currentLink.name);
         }
-    }, []);
+    }, [location.pathname]);
 
     return (
         <Box className="bg-white-500 border-b-2 border-black-900 p-4">
@@ -58,11 +58,17 @@ const Navbar = () => {
                         </Link>
                     ))}
                 </Flex>
+                <Flex ml="auto">
+                    <Button as={NavLink} to="/login" ml={4}>
+                        Login
+                    </Button>
+                </Flex>
                 <IconButton
                     display={{ base: 'block', md: 'none' }}
                     icon={<HamburgerIcon />}
                     aria-label="Open Menu"
                     onClick={onOpen}
+                    className="ml-3"
                 />
             </Flex>
             <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
