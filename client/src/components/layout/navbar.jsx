@@ -10,7 +10,7 @@ const Navbar = () => {
     const location = useLocation();
     const links = [
         { name: "Home", path: "/" },
-        { name: "Faq", path: "/faq" },
+        { name: "FAQ", path: "/faq" },
         { name: "About", path: "/about" },
         { name: "Contact us", path: "/contact-us" }
     ];

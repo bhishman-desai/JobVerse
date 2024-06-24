@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Flex, Text, Input, Button, Stack } from '@chakra-ui/react';
+import { NavLink } from 'react-router-dom';
 
 const Home = () => {
   return (
@@ -26,7 +27,7 @@ const Home = () => {
       >
         <Box flex="1" marginRight={{ lg: "4" }}>
           <Text fontSize={{ base: "2xl", sm: "3xl", md: "4xl" }} mb={4}>
-            Are you <Text as="span" color="green.400">candidate</Text> looking for your dream job?
+            Are you a <Text as="span" color="green.400">candidate</Text> looking for your dream job?
           </Text>
           <Text fontSize={{ base: "lg", sm: "xl", md: "2xl" }} mb={8}>
             Start your job search now!
@@ -34,7 +35,7 @@ const Home = () => {
           
           <Stack spacing={4} width="100%" maxWidth="600px" mb={8}>
             <Input placeholder="Job title, Keywords" variant="filled" backgroundColor="white" color="black"/>
-            <Button as="a" href="http://localhost:3000/sdjgh" colorScheme="green" size="lg">Search</Button>
+            <Button as={NavLink} to="/page-not-found"  colorScheme="green" size="lg">Search</Button>
           </Stack>
         </Box>
 
