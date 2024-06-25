@@ -1,4 +1,3 @@
-
 # Jobverse: Bridging The Gap Between Job Seekers and Employers (Project proposal)
 
 
@@ -71,4 +70,5 @@ const MarkdownPreview = lazy(() => import('./MarkdownPreview.js'));
 
 ## Acknowledgments
 
-* For responsive navbar we took inspiration from [indeed]<https://ca.indeed.com/>
+* For responsive navbar we took inspiration from [Indeed](https://ca.indeed.com/)
+* For Home Landing page the Jobillico website home is taken as inspiration [Jobillico](https://www.jobillico.com/en)
