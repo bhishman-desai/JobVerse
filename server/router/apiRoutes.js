@@ -1,7 +1,7 @@
 import {Router} from "express";
 import authRoute from "./api/authRoute.js";
 import testRoute from "./api/testRoute.js";
-import jobMgmt from "./recruiterApis/jobMgmt.js"
+import jobMgmt from "./api/recruiter/jobMgmt.js"
 
 const router = Router();
 
