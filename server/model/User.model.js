@@ -1,3 +1,4 @@
+/* Author: Bhishman Desai */
 import mongoose from "mongoose";
 
 export const UserSchema = new mongoose.Schema({
@@ -8,8 +9,7 @@ export const UserSchema = new mongoose.Schema({
     },
     roles: {
         Student: {
-            type: Number,
-            default: 2001
+            type: Number
         },
         Recruiter: Number,
         Admin: Number

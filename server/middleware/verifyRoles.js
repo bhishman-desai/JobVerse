@@ -1,3 +1,4 @@
+/* Author: Bhishman Desai */
 const verifyRoles = (...allowedRoles) => {
     return (req, res, next) => {
         if (!req?.user.roles) return res.sendStatus(401);
