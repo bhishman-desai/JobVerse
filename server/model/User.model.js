@@ -9,8 +9,7 @@ export const UserSchema = new mongoose.Schema({
     },
     roles: {
         Student: {
-            type: Number,
-            default: 2001
+            type: Number
         },
         Recruiter: Number,
         Admin: Number
