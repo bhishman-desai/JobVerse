@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     FormControl,
     FormLabel,
@@ -12,23 +12,23 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { getUsername } from '../auth/helper/api'; // Adjust the import path as needed
 
 function JobCreation() {
-    const navigate = useNavigate(); // Initialize useNavigate hook
+    const navigate = useNavigate();
     const [position, setPosition] = useState('');
     const [salary, setSalary] = useState('');
     const [numPositions, setNumPositions] = useState('');
     const [jobDescription, setJobDescription] = useState('');
-    const [resumeRequired, setResumeRequired] = useState('false'); // Initialize as 'false'
-    const [coverLetterRequired, setCoverLetterRequired] = useState('false'); // Initialize as 'false'
+    const [resumeRequired, setResumeRequired] = useState('false');
+    const [coverLetterRequired, setCoverLetterRequired] = useState('false');
     const [salaryError, setSalaryError] = useState('');
     const [numPositionsError, setNumPositionsError] = useState('');
+    const [recruiterId, setRecruiterId] = useState(null);
 
-    // Function to validate inputs
     const validateInputs = () => {
         let isValid = true;
 
-        // Validate salary
         if (!/^\d*$/.test(salary)) {
             setSalaryError('Salary must be a number');
             isValid = false;
@@ -36,7 +36,6 @@ function JobCreation() {
             setSalaryError('');
         }
 
-        // Validate number of positions
         if (!/^\d*$/.test(numPositions)) {
             setNumPositionsError('Number of Positions must be a number');
             isValid = false;
@@ -47,7 +46,20 @@ function JobCreation() {
         return isValid;
     };
 
-    // Handle form submission
+    useEffect(() => {
+        const fetchRecruiterId = async () => {
+            try {
+                const { userId } = await getUsername(); // Assuming getUsername returns { userId }
+                setRecruiterId(userId);
+            } catch (error) {
+                console.error('Error fetching recruiter ID:', error);
+                navigate('/login'); // Redirect if token is not found
+            }
+        };
+
+        fetchRecruiterId();
+    }, [navigate]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -63,6 +75,7 @@ function JobCreation() {
                 jobDescription: jobDescription,
                 resumeRequired: resumeRequired === 'true',
                 coverLetterRequired: coverLetterRequired === 'true',
+                recruiterId: recruiterId // Attach recruiterId to the job
             });
 
             console.log('Job listing created:', response.data);

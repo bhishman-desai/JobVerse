@@ -42,6 +42,7 @@ function App() {
           <Route element={withLayout(RecoveryPage)()} path="/recovery" />
           <Route element={withLayout(ResetPage)()} path="/reset" />
 
+          {/* Recruiter Routes */}
           <Route element={withLayout(JobCreation)()} path="/recruiter/create-job" />
           <Route element={withLayout(JobsDashboard)()} path="/recruiter/dashboard" />
           <Route element={withLayout(UpdateJob)()} path="/recruiter/update-job/:id" />

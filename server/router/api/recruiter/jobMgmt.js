@@ -1,9 +1,9 @@
 import { Router } from "express";
-import {createJob, getAllJobs, getJobById, updateJob, deleteJob} from "../../../controllers/recruiterController.js"
+import {createJob, getJobsForRecruiter, getJobById, updateJob, deleteJob} from "../../../controllers/recruiterController.js"
 
 const router = Router()
 
-router.get("/getJobs", getAllJobs)
+router.get("/getJobsForRecruiter", getJobsForRecruiter)
 router.get("/getJobById/:id", getJobById)
 router.post("/createJob", createJob)
 router.put("/updateJob/:id",updateJob)

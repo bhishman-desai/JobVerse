@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import { v4 as uuidv4 } from 'uuid';
 
 const jobSchema = new mongoose.Schema({
     positionName: { type: String, required: true },
@@ -8,7 +7,8 @@ const jobSchema = new mongoose.Schema({
     jobDescription: { type: String, required: true },
     resumeRequired: { type: Boolean, required: true },
     coverLetterRequired: { type: Boolean, required: true },
-    createdAt: { type: Date, default: Date.now }
+    createdAt: { type: Date, default: Date.now },
+    recruiterId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true } // Reference to User schema
 });
 
 const Job = mongoose.model('Job', jobSchema);

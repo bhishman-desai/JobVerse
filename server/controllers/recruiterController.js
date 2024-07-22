@@ -1,8 +1,36 @@
 import Job from "../model/Job.js";
+import User from "../model/User.model.js";
+import mongoose from 'mongoose';
 
 export async function createJob(req, res) {
+    const { positionName, salary, positionsAvailable, jobDescription, resumeRequired, coverLetterRequired, recruiterId } = req.body;
+
     try {
-        const newJob = new Job(req.body);
+        // Convert recruiterId to ObjectId
+        const convertedRecruiterId = mongoose.Types.ObjectId(recruiterId);
+
+        // Fetch user by recruiterId
+        const user = await User.findById(convertedRecruiterId);
+        if (!user) {
+            return res.status(400).json({ message: "Invalid recruiter ID" });
+        }
+
+        // Check if user has the Recruiter role
+        if (!user.roles.Recruiter) {
+            return res.status(403).json({ message: "Unauthorized. Only recruiters can create jobs." });
+        }
+
+        // Create and save the new job
+        const newJob = new Job({
+            positionName,
+            salary,
+            positionsAvailable,
+            jobDescription,
+            resumeRequired,
+            coverLetterRequired,
+            recruiterId: convertedRecruiterId
+        });
+
         await newJob.save();
         res.status(201).json(newJob);
     } catch (err) {
@@ -11,14 +39,33 @@ export async function createJob(req, res) {
 }
 
 
-export async function getAllJobs(req, res) {
+// export async function getAllJobs(req, res) {
+//     try {
+//         const jobs = await Job.find();
+//         res.status(200).json(jobs);
+//     } catch (err) {
+//         res.status(500).json({ message: err.message });
+//     }
+// }
+
+export async function getJobsForRecruiter(req, res) {
+    const { recruiterId } = req.query; // Get recruiterId from query parameters
+
     try {
-        const jobs = await Job.find();
+        if (!recruiterId) {
+            return res.status(400).json({ message: 'Recruiter ID is required.' });
+        }
+
+        // Find jobs that match the recruiterId
+        const jobs = await Job.find({ recruiterId: recruiterId });
+
+        // Send the jobs as a response
         res.status(200).json(jobs);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 }
+
 
 export const getJobById = async (req, res) => {
     try {
