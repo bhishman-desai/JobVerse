@@ -16,6 +16,11 @@ const ProfilePage = lazy(() => import("./pages/auth/Profile"));
 const RecoveryPage = lazy(() => import("./pages/auth/Recovery"));
 const ResetPage = lazy(() => import("./pages/auth/Reset"));
 
+/* Recruiter Pages*/
+const JobCreation = lazy(()=>import("./pages/recruiter/JobCreation"))
+const JobsDashboard = lazy(()=>import("./pages/recruiter/JobsDashboard"))
+const UpdateJob = lazy(()=>import("./pages/recruiter/UpdateJob"))
+
 /* Page Not Found */
 const PageNotFoundPage = lazy(() => import("./components/pageNotFound"));
 
@@ -36,6 +41,10 @@ function App() {
           <Route element={withLayout(ProfilePage)()} path="/profile" />
           <Route element={withLayout(RecoveryPage)()} path="/recovery" />
           <Route element={withLayout(ResetPage)()} path="/reset" />
+
+          <Route element={withLayout(JobCreation)()} path="/recruiter/create-job" />
+          <Route element={withLayout(JobsDashboard)()} path="/recruiter/dashboard" />
+          <Route element={withLayout(UpdateJob)()} path="/recruiter/update-job/:id" />
 
           {/*404 Page Not Found*/}
           <Route element={withLayout(PageNotFoundPage)()} path="*" />
