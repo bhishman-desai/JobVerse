@@ -1,11 +1,11 @@
 import nodemailer from 'nodemailer';
 import Mailgen from 'mailgen';
 
-/* https://ethereal.email/create */
 let nodeConfig = {
-    host: "smtp.ethereal.email",
-    port: 587,
-    secure: false, /* True for 465, false for other ports */
+    service: "Gmail",
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
     auth: {
         user:process.env.EMAIL,
         pass:process.env.PASSWORD,
@@ -29,8 +29,8 @@ export const registerMail = async (req, res) => {
     /* Body of the email */
     var email = {
         body : {
-            name: username,
-            intro : text || 'Welcome to JobVerse! We\'re very excited to have you on board.',
+            name: username.toUpperCase(),
+            intro : 'Welcome to JobVerse! We\'re very excited to have you on board.',
             outro: 'Need help, or have questions? Just reply to this email, we\'d love to help.'
         }
     }
