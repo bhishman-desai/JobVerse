@@ -1,3 +1,4 @@
+/* Author: Bhishman Desai */
 import jwt from "jsonwebtoken";
 
 /* Auth Middleware */

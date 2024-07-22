@@ -1,3 +1,4 @@
+/* Author: Bhishman Desai */
 /* Image to base64 */
 export default function convertToBase64(file) {
     return new Promise((resolve, reject) => {

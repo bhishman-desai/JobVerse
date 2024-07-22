@@ -1,3 +1,4 @@
+/* Author: Bhishman Desai */
 import React, { useState } from "react";
 import avatar from "../../assets/Profile.png";
 import toast, { Toaster } from "react-hot-toast";

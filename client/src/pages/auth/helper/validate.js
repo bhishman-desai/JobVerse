@@ -1,3 +1,4 @@
+/* Author: Bhishman Desai */
 import toast from "react-hot-toast";
 import { authenticate, getUser } from "./api";
 
