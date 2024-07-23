@@ -20,6 +20,7 @@ const ResetPage = lazy(() => import("./pages/auth/Reset"));
 const JobCreation = lazy(()=>import("./pages/recruiter/JobCreation"))
 const JobsDashboard = lazy(()=>import("./pages/recruiter/JobsDashboard"))
 const UpdateJob = lazy(()=>import("./pages/recruiter/UpdateJob"))
+const JobDetail = lazy(()=>import("./pages/recruiter/JobDetail"))
 
 /* Page Not Found */
 const PageNotFoundPage = lazy(() => import("./components/pageNotFound"));
@@ -45,6 +46,8 @@ function App() {
           {/* Recruiter Routes */}
           <Route element={withLayout(JobCreation)()} path="/recruiter/create-job" />
           <Route element={withLayout(JobsDashboard)()} path="/recruiter/dashboard" />
+          <Route element={withLayout(JobDetail)()}path="/recruiter/job/:jobId" />
+          
           <Route element={withLayout(UpdateJob)()} path="/recruiter/update-job/:id" />
 
           {/*404 Page Not Found*/}

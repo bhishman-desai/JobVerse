@@ -1,28 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
-    Box,
     Heading,
     Button,
     useToast,
     useBreakpointValue,
-    SimpleGrid,
     Text,
-    Center
+    Center,
+    Table,
+    Thead,
+    Tbody,
+    Tr,
+    Th,
+    Td,
+    IconButton,
+    Container,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
-import JobCard from './JobCard';
-import JobModal from './JobModal';
-import { useDisclosure } from '@chakra-ui/react';
-
 import { getUsername } from '../auth/helper/api';
+import { EditIcon, DeleteIcon } from '@chakra-ui/icons';
 
 const JobsDashboard = () => {
     const [jobs, setJobs] = useState([]);
-    const [selectedJob, setSelectedJob] = useState(null);
     const toast = useToast();
     const navigate = useNavigate();
-    const { isOpen, onOpen, onClose } = useDisclosure();
 
     useEffect(() => {
         const loadData = async () => {
@@ -40,7 +41,7 @@ const JobsDashboard = () => {
     const fetchJobs = async (recruiterId) => {
         try {
             const response = await axios.get(`/api/recruiter/getJobsForRecruiter`, {
-                params: { recruiterId } 
+                params: { recruiterId }
             });
             setJobs(response.data);
         } catch (error) {
@@ -59,7 +60,10 @@ const JobsDashboard = () => {
         if (job) {
             try {
                 await axios.delete(`http://localhost:8080/api/recruiter/deleteJob/${job._id}`);
-                fetchJobs(); // Refresh jobs list after deletion
+                
+                // Update UI directly by filtering out the deleted job
+                setJobs(jobs.filter((j) => j._id !== job._id));
+                
                 toast({
                     title: 'Success',
                     description: 'Job deleted successfully.',
@@ -67,7 +71,6 @@ const JobsDashboard = () => {
                     duration: 3000,
                     isClosable: true,
                 });
-                onClose(); // Close the modal after deletion if open
             } catch (error) {
                 console.error('Error deleting job:', error);
                 toast({
@@ -91,7 +94,7 @@ const JobsDashboard = () => {
     });
 
     return (
-        <Box p={4}>
+        <Container maxW="container.xl" p={4}>
             <Button
                 colorScheme="teal"
                 aria-label="Create job"
@@ -117,36 +120,55 @@ const JobsDashboard = () => {
                     </Text>
                 </Center>
             ) : (
-                <SimpleGrid columns={{ base: 1, sm: 2, md: 3 }} spacing={4}>
-                    {jobs.map((job) => (
-                        <JobCard
-                            key={job._id}
-                            job={job}
-                            onEdit={() => navigate(`/recruiter/update-job/${job._id}`)}
-                            onDelete={() => handleDelete(job)}
-                            onOpenModal={() => {
-                                setSelectedJob(job);
-                                onOpen();
-                            }}
-                        />
-                    ))}
-                </SimpleGrid>
+                <Table variant="simple" size="md" colorScheme="gray" spacing="1">
+                    <Thead>
+                        <Tr>
+                            <Th>Position</Th>
+                            <Th>Salary</Th>
+                            <Th>Available Positions</Th>
+                            <Th>Description</Th>
+                            <Th>Actions</Th>
+                        </Tr>
+                    </Thead>
+                    <Tbody>
+                        {jobs.map((job) => (
+                            <Tr
+                                key={job._id}
+                                _hover={{ bg: 'gray.100', cursor: 'pointer' }}
+                                onClick={() => navigate(`/recruiter/job/${job._id}`)}
+                            >
+                                <Td>{job.positionName}</Td>
+                                <Td>{job.salary}</Td>
+                                <Td>{job.positionsAvailable}</Td>
+                                <Td maxWidth="200px" overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">
+                                    <Text>{job.jobDescription}</Text>
+                                </Td>
+                                <Td>
+                                    <IconButton
+                                        icon={<EditIcon />}
+                                        aria-label="Edit Job"
+                                        onClick={(e) => {
+                                            e.stopPropagation(); // Prevent navigation when clicking on buttons
+                                            navigate(`/recruiter/update-job/${job._id}`);
+                                        }}
+                                        mr={2}
+                                    />
+                                    <IconButton
+                                        icon={<DeleteIcon />}
+                                        aria-label="Delete Job"
+                                        onClick={(e) => {
+                                            e.stopPropagation(); // Prevent navigation when clicking on buttons
+                                            handleDelete(job);
+                                        }}
+                                        colorScheme="red"
+                                    />
+                                </Td>
+                            </Tr>
+                        ))}
+                    </Tbody>
+                </Table>
             )}
-
-            <JobModal
-                isOpen={isOpen}
-                onClose={onClose}
-                job={selectedJob}
-                onEdit={() => {
-                    navigate(`/recruiter/update-job/${selectedJob?._id}`);
-                    onClose();
-                }}
-                onDelete={() => {
-                    handleDelete(selectedJob);
-                    onClose();
-                }}
-            />
-        </Box>
+        </Container>
     );
 };
 
