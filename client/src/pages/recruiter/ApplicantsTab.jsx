@@ -61,8 +61,8 @@ const ApplicantsTab = ({ applicants, loading, onStatusChange }) => {
                                         size="sm"
                                     >
                                         <option value="Applied">Applied</option>
-                                        <option value="Interviewed">Interviewed</option>
-                                        <option value="Hired">Hired</option>
+                                        <option value="Interview">Interview</option>
+                                        <option value="Accepted">Accepted</option>
                                         <option value="Rejected">Rejected</option>
                                     </Select>
                                 </Td>
@@ -105,7 +105,7 @@ const ApplicantsTab = ({ applicants, loading, onStatusChange }) => {
                         {pdfUrl ? (
                             <iframe src={pdfUrl} width="100%" height="600px" title="PDF Viewer"></iframe>
                         ) : (
-                            <Text>No {pdfType.toLowerCase()} is required for this applicant</Text>
+                            <Text>No {pdfType.toLowerCase()} is available for this applicant</Text>
                         )}
                     </ModalBody>
                 </ModalContent>
