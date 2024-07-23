@@ -30,7 +30,7 @@ export const registerMail = async (req, res) => {
     var email = {
         body : {
             name: username.toUpperCase(),
-            intro : 'Welcome to JobVerse! We\'re very excited to have you on board.',
+            intro : text || 'Welcome to JobVerse! We\'re very excited to have you on board.',
             outro: 'Need help, or have questions? Just reply to this email, we\'d love to help.'
         }
     }
