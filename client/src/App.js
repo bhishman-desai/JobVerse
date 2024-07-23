@@ -47,7 +47,7 @@ function App() {
           <Route element={withLayout(JobCreation)()} path="/recruiter/create-job" />
           <Route element={withLayout(JobsDashboard)()} path="/recruiter/dashboard" />
           <Route element={withLayout(JobDetail)()}path="/recruiter/job/:jobId" />
-          
+
           <Route element={withLayout(UpdateJob)()} path="/recruiter/update-job/:id" />
 
           {/*404 Page Not Found*/}

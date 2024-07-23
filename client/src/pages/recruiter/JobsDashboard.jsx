@@ -126,7 +126,8 @@ const JobsDashboard = () => {
                             <Th>Position</Th>
                             <Th>Salary</Th>
                             <Th>Available Positions</Th>
-                            <Th>Description</Th>
+                            <Th>Province</Th>
+                            <Th>Company</Th>
                             <Th>Actions</Th>
                         </Tr>
                     </Thead>
@@ -140,9 +141,8 @@ const JobsDashboard = () => {
                                 <Td>{job.positionName}</Td>
                                 <Td>{job.salary}</Td>
                                 <Td>{job.positionsAvailable}</Td>
-                                <Td maxWidth="200px" overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">
-                                    <Text>{job.jobDescription}</Text>
-                                </Td>
+                                <Td>{job.location}</Td>
+                                <Td>{job.companyName}</Td>
                                 <Td>
                                     <IconButton
                                         icon={<EditIcon />}

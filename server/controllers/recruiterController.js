@@ -1,9 +1,108 @@
 import Job from "../model/Job.js";
+import Applicant from "../model/Applicants.js";
 import User from "../model/User.model.js";
 import mongoose from 'mongoose';
 
+
+// export async function getAllJobs(req, res) {
+//     try {
+//         const jobs = await Job.find();
+//         res.status(200).json(jobs);
+//     } catch (err) {
+//         res.status(500).json({ message: err.message });
+//     }
+// }
+
+
+export async function addApplicant(req, res) {
+    const { name, email, resume, coverLetter, jobId, status } = req.body;
+
+    try {
+        const newApplicant = new Applicant({
+            name,
+            email,
+            resume,
+            coverLetter,
+            jobId,
+            status: status || 'Applied'
+        });
+
+        await newApplicant.save();
+        res.status(201).json(newApplicant);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+}
+
+export async function getApplicantsByJobId(req, res) {
+    const { id } = req.params;
+    if (!id) {
+        return res.status(400).json({ error: 'Job ID is required' });
+    }
+
+    try {
+        const applicants = await Applicant.find({ id });
+
+        if (applicants.length === 0) {
+            return res.status(404).json({ message: 'No applicants found for this job' });
+        }
+
+        return res.status(200).json(applicants);
+    } catch (error) {
+        console.error('Error fetching applicants:', error);
+        return res.status(500).json({ error: 'An error occurred while fetching applicants' });
+    }
+};
+
+
+export async function updateApplicantStatus(req, res) {
+    const { applicantId } = req.params;
+    const { status } = req.body;
+
+    // Validate the input
+    const validStatuses = ['Applied', 'Interview', 'Accepted', 'Rejected'];
+    if (!validStatuses.includes(status)) {
+        return res.status(400).json({ error: 'Invalid status value' });
+    }
+
+    try {
+        // Find the applicant by ID and update the status
+        const updatedApplicant = await Applicant.findByIdAndUpdate(
+            applicantId,
+            { status },
+            { new: true } // Return the updated document
+        );
+
+        if (!updatedApplicant) {
+            return res.status(404).json({ error: 'Applicant not found' });
+        }
+
+        return res.status(200).json(updatedApplicant);
+    } catch (error) {
+        console.error('Error updating applicant status:', error);
+        return res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+
+
+
+
+
+
 export async function createJob(req, res) {
-    const { positionName, salary, positionsAvailable, jobDescription, resumeRequired, coverLetterRequired, recruiterId } = req.body;
+    const {
+        positionName,
+        salary,
+        positionsAvailable,
+        jobDescription,
+        resumeRequired,
+        coverLetterRequired,
+        recruiterId,
+        companyName,
+        location
+    } = req.body;
+
+    console.log(location, companyName)
 
     try {
         // Convert recruiterId to ObjectId
@@ -28,7 +127,9 @@ export async function createJob(req, res) {
             jobDescription,
             resumeRequired,
             coverLetterRequired,
-            recruiterId: convertedRecruiterId
+            recruiterId: convertedRecruiterId,
+            companyName,
+            location
         });
 
         await newJob.save();
@@ -37,17 +138,6 @@ export async function createJob(req, res) {
         res.status(400).json({ message: err.message });
     }
 }
-
-
-// export async function getAllJobs(req, res) {
-//     try {
-//         const jobs = await Job.find();
-//         res.status(200).json(jobs);
-//     } catch (err) {
-//         res.status(500).json({ message: err.message });
-//     }
-// }
-
 export async function getJobsForRecruiter(req, res) {
     const { recruiterId } = req.query; // Get recruiterId from query parameters
 
@@ -66,7 +156,6 @@ export async function getJobsForRecruiter(req, res) {
     }
 }
 
-
 export const getJobById = async (req, res) => {
     try {
         const job = await Job.findById(req.params.id);
@@ -81,13 +170,28 @@ export const getJobById = async (req, res) => {
 
 export const updateJob = async (req, res) => {
     try {
-        const job = await Job.findByIdAndUpdate(req.params.id, req.body, {
+        // Extract companyName along with other fields from the request body
+        const { positionName, salary, positionsAvailable, jobDescription, resumeRequired, coverLetterRequired, location, companyName } = req.body;
+
+        // Find and update the job with the new data
+        const job = await Job.findByIdAndUpdate(req.params.id, {
+            positionName,
+            salary,
+            positionsAvailable,
+            jobDescription,
+            resumeRequired,
+            coverLetterRequired,
+            location, // Updated field
+            companyName // Include new field
+        }, {
             new: true,
             runValidators: true
         });
+
         if (!job) {
             return res.status(404).json({ message: 'Job not found' });
         }
+
         res.status(200).json(job);
     } catch (err) {
         res.status(400).json({ message: err.message });

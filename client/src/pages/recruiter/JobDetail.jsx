@@ -1,36 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import {
-    Box,
-    Heading,
-    Text,
-    Stack,
-    Button,
-    useToast,
-    Spinner,
-    Center,
-    Tabs,
-    TabList,
-    TabPanels,
-    Tab,
-    TabPanel,
-    Table,
-    Thead,
-    Tbody,
-    Tr,
-    Th,
-    Td
-} from '@chakra-ui/react';
+import { Box, Spinner, Center, useToast, useDisclosure, Tabs, TabList, TabPanels, Tab, TabPanel, Text } from '@chakra-ui/react';
 import { useParams, useNavigate } from 'react-router-dom';
+import JobDetailsTab from './JobDetailsTab';
+import ApplicantsTab from './ApplicantsTab';
+import ConfirmationModal from './ConfirmationModal';
 
 const JobDetail = () => {
     const [job, setJob] = useState(null);
     const [applicants, setApplicants] = useState([]);
     const [loading, setLoading] = useState(true);
     const [loadingApplicants, setLoadingApplicants] = useState(false);
+    const [tabIndex, setTabIndex] = useState(0);
+    const [showConfirmation, setShowConfirmation] = useState(false);
     const toast = useToast();
     const navigate = useNavigate();
     const { jobId } = useParams();
+    const { isOpen, onOpen, onClose } = useDisclosure();
 
     useEffect(() => {
         const fetchJob = async () => {
@@ -70,6 +56,7 @@ const JobDetail = () => {
             if (response.status === 200 && response.data) {
                 setApplicants(response.data);
             } else {
+                setApplicants([]);
                 throw new Error('No applicants found');
             }
         } catch (error) {
@@ -113,6 +100,46 @@ const JobDetail = () => {
         }
     };
 
+    const handleStatusChange = async (applicantId, newStatus) => {
+        try {
+            const response = await axios.put(
+                `http://localhost:8080/api/recruiter/updateApplicantStatus/${applicantId}`,
+                { status: newStatus, jobId } // Include jobId in the request body
+            );
+            if (response.status === 200) {
+                setApplicants((prevApplicants) =>
+                    prevApplicants.map((applicant) =>
+                        applicant._id === applicantId ? { ...applicant, status: newStatus } : applicant
+                    )
+                );
+                toast({
+                    title: 'Success',
+                    description: 'Applicant status updated successfully.',
+                    status: 'success',
+                    duration: 3000,
+                    isClosable: true,
+                });
+            } else {
+                throw new Error('Failed to update applicant status');
+            }
+        } catch (error) {
+            console.error('Error updating status:', error);
+            toast({
+                title: 'Error',
+                description: 'Failed to update applicant status. Please try again later.',
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+            });
+        }
+    };
+
+    useEffect(() => {
+        if (tabIndex === 1) {
+            fetchApplicants();
+        }
+    }, [tabIndex, jobId]);
+
     if (loading) {
         return (
             <Center h="100vh">
@@ -133,79 +160,30 @@ const JobDetail = () => {
 
     return (
         <Box p={6} maxW="container.md" mx="auto">
-            <Tabs variant="enclosed">
+            <Tabs variant="enclosed" index={tabIndex} onChange={(index) => setTabIndex(index)}>
                 <TabList>
                     <Tab>Job Details</Tab>
-                    <Tab onClick={fetchApplicants}>Applicants</Tab>
+                    <Tab>Applicants</Tab>
                 </TabList>
                 <TabPanels>
                     <TabPanel>
-                        <Stack spacing={4}>
-                            <Heading as="h1" size="xl">
-                                {job.positionName}
-                            </Heading>
-                            <Text fontSize="lg" fontWeight="bold">
-                                Salary: ${job.salary}
-                            </Text>
-                            <Text fontSize="lg" fontWeight="bold">
-                                Available Positions: {job.positionsAvailable}
-                            </Text>
-                            <Text fontSize="lg" fontWeight="bold">
-                                Job Description:
-                            </Text>
-                            <Text fontSize="md" whiteSpace="pre-line">
-                                {job.jobDescription}
-                            </Text>
-                            <Stack direction="row" spacing={4} mt={4}>
-                                <Button colorScheme="teal" onClick={() => navigate(`/recruiter/update-job/${jobId}`)}>
-                                    Edit Job
-                                </Button>
-                                <Button colorScheme="red" onClick={handleDelete}>
-                                    Delete Job
-                                </Button>
-                                <Button colorScheme="gray" onClick={() => navigate('/recruiter/dashboard')}>
-                                    Back to Dashboard
-                                </Button>
-                            </Stack>
-                        </Stack>
+                        <JobDetailsTab job={job} onDelete={() => setShowConfirmation(true)} />
                     </TabPanel>
                     <TabPanel>
-                        {loadingApplicants ? (
-                            <Center h="100vh">
-                                <Spinner size="xl" />
-                            </Center>
-                        ) : (
-                            <Box>
-                                <Table variant="simple">
-                                    <Thead>
-                                        <Tr>
-                                            <Th>Name</Th>
-                                            <Th>Email</Th>
-                                            <Th>Actions</Th>
-                                        </Tr>
-                                    </Thead>
-                                    <Tbody>
-                                        {applicants.map((applicant) => (
-                                            <Tr key={applicant.id}>
-                                                <Td>{applicant.name}</Td>
-                                                <Td>{applicant.email}</Td>
-                                                <Td>
-                                                    <Button colorScheme="blue" mr={2}>
-                                                        View Resume
-                                                    </Button>
-                                                    <Button colorScheme="blue">
-                                                        View Cover Letter
-                                                    </Button>
-                                                </Td>
-                                            </Tr>
-                                        ))}
-                                    </Tbody>
-                                </Table>
-                            </Box>
-                        )}
+                        <ApplicantsTab
+                            applicants={applicants}
+                            loading={loadingApplicants}
+                            onStatusChange={handleStatusChange}
+                        />
                     </TabPanel>
                 </TabPanels>
             </Tabs>
+
+            <ConfirmationModal
+                isOpen={showConfirmation}
+                onClose={() => setShowConfirmation(false)}
+                onDelete={handleDelete}
+            />
         </Box>
     );
 };

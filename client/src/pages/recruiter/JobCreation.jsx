@@ -22,9 +22,28 @@ function JobCreation() {
     const [jobDescription, setJobDescription] = useState('');
     const [resumeRequired, setResumeRequired] = useState('false');
     const [coverLetterRequired, setCoverLetterRequired] = useState('false');
+    const [companyName, setCompanyName] = useState('');
+    const [location, setLocation] = useState('');
     const [salaryError, setSalaryError] = useState('');
     const [numPositionsError, setNumPositionsError] = useState('');
     const [recruiterId, setRecruiterId] = useState(null);
+
+    // List of Canadian provinces
+    const provinces = [
+        'Alberta',
+        'British Columbia',
+        'Manitoba',
+        'New Brunswick',
+        'Newfoundland and Labrador',
+        'Northwest Territories',
+        'Nova Scotia',
+        'Nunavut',
+        'Ontario',
+        'Prince Edward Island',
+        'Quebec',
+        'Saskatchewan',
+        'Yukon'
+    ];
 
     const validateInputs = () => {
         let isValid = true;
@@ -75,7 +94,9 @@ function JobCreation() {
                 jobDescription: jobDescription,
                 resumeRequired: resumeRequired === 'true',
                 coverLetterRequired: coverLetterRequired === 'true',
-                recruiterId: recruiterId // Attach recruiterId to the job
+                recruiterId: recruiterId, // Attach recruiterId to the job
+                companyName: companyName, // Attach companyName to the job
+                location: location // Attach location to the job
             });
 
             console.log('Job listing created:', response.data);
@@ -144,6 +165,30 @@ function JobCreation() {
                             value={jobDescription}
                             onChange={(e) => setJobDescription(e.target.value)}
                         />
+                    </FormControl>
+
+                    <FormControl isRequired>
+                        <FormLabel>Company Name:</FormLabel>
+                        <Input
+                            type='text'
+                            value={companyName}
+                            onChange={(e) => setCompanyName(e.target.value)}
+                        />
+                    </FormControl>
+
+                    <FormControl isRequired>
+                        <FormLabel>Location:</FormLabel>
+                        <Select
+                            value={location}
+                            onChange={(e) => setLocation(e.target.value)}
+                        >
+                            <option value='' disabled>Select a province</option>
+                            {provinces.map((province) => (
+                                <option key={province} value={province}>
+                                    {province}
+                                </option>
+                            ))}
+                        </Select>
                     </FormControl>
 
                     <FormControl isRequired>

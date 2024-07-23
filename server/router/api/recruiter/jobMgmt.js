@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {createJob, getJobsForRecruiter, getJobById, updateJob, deleteJob} from "../../../controllers/recruiterController.js"
+import {createJob, getJobsForRecruiter, getJobById, updateJob, deleteJob, addApplicant, getApplicantsByJobId, updateApplicantStatus} from "../../../controllers/recruiterController.js"
 
 const router = Router()
 
@@ -9,5 +9,8 @@ router.post("/createJob", createJob)
 router.put("/updateJob/:id",updateJob)
 router.delete("/deleteJob/:id",deleteJob)
 
+router.post("/addApplicant", addApplicant)
+router.get("/getApplicantsByJobId/:id", getApplicantsByJobId)
+router.put("/updateApplicantStatus/:applicantId", updateApplicantStatus)
 
 export default router
