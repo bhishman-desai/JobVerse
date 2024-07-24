@@ -1,3 +1,5 @@
+/* Author: Ashish Kumar Guntipalli */
+
 import Job from "../model/Job.js";
 import Applicant from "../model/Applicants.js";
 import User from "../model/User.model.js";
