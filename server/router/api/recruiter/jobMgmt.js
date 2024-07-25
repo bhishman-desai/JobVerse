@@ -1,3 +1,5 @@
+/* Author: Ashish Kumar Guntipalli */
+
 import { Router } from "express";
 import {createJob, getJobsForRecruiter, getJobById, updateJob, deleteJob, addApplicant, getApplicantsByJobId, updateApplicantStatus} from "../../../controllers/recruiterController.js"
 

@@ -1,3 +1,5 @@
+/* Author: Ashish Kumar Guntipalli */
+
 import React from 'react';
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Button } from '@chakra-ui/react';
 

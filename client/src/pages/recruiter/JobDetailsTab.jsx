@@ -1,4 +1,5 @@
-import React from 'react';
+/* Author: Ashish Kumar Guntipalli */
+
 import { Box, Heading, Text, Stack, Button } from '@chakra-ui/react';
 import { EditIcon, DeleteIcon, ArrowBackIcon } from '@chakra-ui/icons';
 import { useNavigate } from 'react-router-dom';

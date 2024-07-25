@@ -11,6 +11,8 @@ const router = Router();
 /* Auth Module Route */
 router.use("/", authRoute);
 router.use("/health", testRoute);
+
+/* Author: Ashish Kumar Guntipalli */
 router.use("/recruiter", RecjobMgmt);
 
 export default router;

@@ -1,3 +1,5 @@
+/* Author: Ashish Kumar Guntipalli */
+
 import Job from "../model/Job.js";
 import Applicant from "../model/Applicants.js";
 import User from "../model/User.model.js";
@@ -200,6 +202,7 @@ export const updateJob = async (req, res) => {
 
 export const deleteJob = async (req, res) => {
     try {
+        await Applicant.deleteMany({ jobId: { $in: req.params.id} });
         const job = await Job.findByIdAndDelete(req.params.id);
         if (!job) {
             return res.status(404).json({ message: 'Job not found' });

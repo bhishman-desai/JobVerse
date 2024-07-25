@@ -1,3 +1,5 @@
+/* Author: Ashish Kumar Guntipalli */
+
 import mongoose from 'mongoose';
 
 const jobSchema = new mongoose.Schema({
