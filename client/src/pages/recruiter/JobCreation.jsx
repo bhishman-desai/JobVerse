@@ -12,9 +12,8 @@ import {
     Box,
     Heading,
 } from '@chakra-ui/react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { getUsername } from '../auth/helper/api'; // Adjust the import path as needed
+import { createJob, getRecruiterId } from './helper/jobApis'; // Adjust the import path as needed
 
 function JobCreation() {
     const navigate = useNavigate();
@@ -70,10 +69,10 @@ function JobCreation() {
     useEffect(() => {
         const fetchRecruiterId = async () => {
             try {
-                const { userId } = await getUsername(); // Assuming getUsername returns { userId }
+                const userId = await getRecruiterId();
                 setRecruiterId(userId);
             } catch (error) {
-                console.error('Error fetching recruiter ID:', error);
+                console.error(error);
                 navigate('/login'); // Redirect if token is not found
             }
         };
@@ -89,29 +88,22 @@ function JobCreation() {
         }
 
         try {
-            const response = await axios.post(
-                'http://localhost:8080/api/recruiter/createJob',
-                {
-                    positionName: position,
-                    salary: parseInt(salary),
-                    positionsAvailable: parseInt(numPositions),
-                    jobDescription: jobDescription,
-                    resumeRequired: resumeRequired === 'true',
-                    coverLetterRequired: coverLetterRequired === 'true',
-                    recruiterId: recruiterId, // Attach recruiterId to the job
-                    companyName: companyName, // Attach companyName to the job
-                    location: location, // Attach location to the job
-                  },
-                  {
-                    headers: { Authorization: `Bearer ${token}` }
-                  }
-              );
-              
+            const jobData = {
+                positionName: position,
+                salary: parseInt(salary),
+                positionsAvailable: parseInt(numPositions),
+                jobDescription: jobDescription,
+                resumeRequired: resumeRequired === 'true',
+                coverLetterRequired: coverLetterRequired === 'true',
+                recruiterId: recruiterId, // Attach recruiterId to the job
+                companyName: companyName, // Attach companyName to the job
+                location: location, // Attach location to the job
+            };
 
-            console.log('Job listing created:', response.data);
+            await createJob(jobData, token);
             navigate('/recruiter/dashboard'); // Redirect to dashboard after successful job creation
         } catch (error) {
-            console.error('Error creating job listing:', error);
+            console.error(error);
             // Handle error states (e.g., show error message to user)
         }
     };
