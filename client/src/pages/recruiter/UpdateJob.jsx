@@ -1,7 +1,7 @@
 /* Author: Ashish Kumar Guntipalli */
 
 import React, { useState, useEffect } from 'react';
-import { FormControl, FormLabel, Input, Button, Select, Textarea, Box, Heading } from '@chakra-ui/react';
+import { FormControl, FormLabel, Input, Button, Select, Textarea, Box, Heading, useToast } from '@chakra-ui/react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 
@@ -16,6 +16,7 @@ function UpdateJob() {
     const [coverLetterRequired, setCoverLetterRequired] = useState(false);
     const [location, setLocation] = useState('');
     const [companyName, setCompanyName] = useState('');
+    const toast = useToast(); // Initialize the toast hook
 
     const provinces = [
         'Alberta', 'British Columbia', 'Manitoba', 'New Brunswick', 'Newfoundland and Labrador',
@@ -25,8 +26,11 @@ function UpdateJob() {
 
     useEffect(() => {
         const fetchJobDetails = async () => {
+            const token = localStorage.getItem("token");
             try {
-                const response = await axios.get(`http://localhost:8080/api/recruiter/getJobById/${id}`);
+                const response = await axios.get(`http://localhost:8080/api/recruiter/getJobById/${id}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
                 const job = response.data;
                 setPositionName(job.positionName);
                 setSalary(job.salary.toString());
@@ -47,22 +51,49 @@ function UpdateJob() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        const token = localStorage.getItem("token");
         try {
-            await axios.put(`http://localhost:8080/api/recruiter/updateJob/${id}`, {
-                positionName,
-                salary: parseInt(salary),
-                positionsAvailable: parseInt(numPositions),
-                jobDescription,
-                resumeRequired,
-                coverLetterRequired,
-                location, // Include updated field
-                companyName, // Include company name
+            await axios.put(
+                `http://localhost:8080/api/recruiter/updateJob/${id}`,
+                {
+                    positionName,
+                    salary: parseInt(salary),
+                    positionsAvailable: parseInt(numPositions),
+                    jobDescription,
+                    resumeRequired,
+                    coverLetterRequired,
+                    location, // Include updated field
+                    companyName, // Include company name
+                },
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+
+            // Show success toast
+            toast({
+                title: "Job updated successfully.",
+                description: "The job listing has been updated.",
+                status: "success",
+                duration: 5000,
+                isClosable: true,
+                position: "bottom",
             });
 
+            // Navigate to the dashboard
             navigate(`/recruiter/dashboard`);
         } catch (error) {
             console.error('Error updating job listing:', error);
+
+            // Show error toast
+            toast({
+                title: "Error updating job listing.",
+                description: "There was an issue updating the job. Please try again later.",
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+                position: "bottom",
+            });
         }
     };
 

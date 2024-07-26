@@ -22,12 +22,15 @@ const JobDetail = () => {
 
     useEffect(() => {
         const fetchJob = async () => {
+            const token = localStorage.getItem("token");
             try {
                 if (!jobId) {
                     throw new Error('Job ID is missing');
                 }
 
-                const response = await axios.get(`http://localhost:8080/api/recruiter/getJobById/${jobId}`);
+                const response = await axios.get(`http://localhost:8080/api/recruiter/getJobById/${jobId}`,{
+                    headers: { Authorization: `Bearer ${token}` }
+                });
                 if (response.status === 200 && response.data) {
                     setJob(response.data);
                 } else {
@@ -52,9 +55,12 @@ const JobDetail = () => {
     }, [jobId, toast, navigate]);
 
     const fetchApplicants = async () => {
+        const token = localStorage.getItem("token");
         setLoadingApplicants(true);
         try {
-            const response = await axios.get(`http://localhost:8080/api/recruiter/getApplicantsByJobId/${jobId}`);
+            const response = await axios.get(`http://localhost:8080/api/recruiter/getApplicantsByJobId/${jobId}`,{
+                headers: { Authorization: `Bearer ${token}` }
+            });
             if (response.status === 200 && response.data) {
                 setApplicants(response.data);
             } else {
@@ -76,8 +82,11 @@ const JobDetail = () => {
     };
 
     const handleDelete = async () => {
+        const token = localStorage.getItem("token");
         try {
-            const response = await axios.delete(`http://localhost:8080/api/recruiter/deleteJob/${jobId}`);
+            const response = await axios.delete(`http://localhost:8080/api/recruiter/deleteJob/${jobId}`,{
+                headers: { Authorization: `Bearer ${token}` }
+            });
             if (response.status === 200) {
                 toast({
                     title: 'Success',

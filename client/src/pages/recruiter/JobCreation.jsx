@@ -83,23 +83,30 @@ function JobCreation() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        const token = localStorage.getItem("token");
         if (!validateInputs()) {
             return; // Do not submit if there are validation errors
         }
 
         try {
-            const response = await axios.post('http://localhost:8080/api/recruiter/createJob', {
-                positionName: position,
-                salary: parseInt(salary),
-                positionsAvailable: parseInt(numPositions),
-                jobDescription: jobDescription,
-                resumeRequired: resumeRequired === 'true',
-                coverLetterRequired: coverLetterRequired === 'true',
-                recruiterId: recruiterId, // Attach recruiterId to the job
-                companyName: companyName, // Attach companyName to the job
-                location: location // Attach location to the job
-            });
+            const response = await axios.post(
+                'http://localhost:8080/api/recruiter/createJob',
+                {
+                    positionName: position,
+                    salary: parseInt(salary),
+                    positionsAvailable: parseInt(numPositions),
+                    jobDescription: jobDescription,
+                    resumeRequired: resumeRequired === 'true',
+                    coverLetterRequired: coverLetterRequired === 'true',
+                    recruiterId: recruiterId, // Attach recruiterId to the job
+                    companyName: companyName, // Attach companyName to the job
+                    location: location, // Attach location to the job
+                  },
+                  {
+                    headers: { Authorization: `Bearer ${token}` }
+                  }
+              );
+              
 
             console.log('Job listing created:', response.data);
             navigate('/recruiter/dashboard'); // Redirect to dashboard after successful job creation

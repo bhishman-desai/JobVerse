@@ -41,8 +41,10 @@ const JobsDashboard = () => {
     }, [navigate]);
 
     const fetchJobs = async (recruiterId) => {
+        const token = localStorage.getItem("token");
         try {
             const response = await axios.get(`/api/recruiter/getJobsForRecruiter`, {
+                headers: { Authorization: `Bearer ${token}` },
                 params: { recruiterId }
             });
             setJobs(response.data);
@@ -59,9 +61,12 @@ const JobsDashboard = () => {
     };
 
     const handleDelete = async (job) => {
+        const token = localStorage.getItem("token");
         if (job) {
             try {
-                await axios.delete(`http://localhost:8080/api/recruiter/deleteJob/${job._id}`);
+                await axios.delete(`http://localhost:8080/api/recruiter/deleteJob/${job._id}`,{
+                    headers: { Authorization: `Bearer ${token}` }
+                });
                 
                 // Update UI directly by filtering out the deleted job
                 setJobs(jobs.filter((j) => j._id !== job._id));
