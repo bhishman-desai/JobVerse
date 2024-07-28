@@ -1,12 +1,28 @@
 /* Author: Ashish Kumar Guntipalli */
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Box, Spinner, Center, useToast, useDisclosure, Tabs, TabList, TabPanels, Tab, TabPanel, Text } from '@chakra-ui/react';
+import {
+    Box,
+    Spinner,
+    Center,
+    useToast,
+    Tabs,
+    TabList,
+    TabPanels,
+    Tab,
+    TabPanel,
+    Text
+} from '@chakra-ui/react';
 import { useParams, useNavigate } from 'react-router-dom';
 import JobDetailsTab from './JobDetailsTab';
 import ApplicantsTab from './ApplicantsTab';
 import ConfirmationModal from './ConfirmationModal';
+import {
+    fetchJobById,
+    fetchApplicantsByJobId,
+    deleteJobById,
+    updateApplicantStatus
+} from './helper/jobApis';
 
 const JobDetail = () => {
     const [job, setJob] = useState(null);
@@ -18,7 +34,7 @@ const JobDetail = () => {
     const toast = useToast();
     const navigate = useNavigate();
     const { jobId } = useParams();
-    const { isOpen, onOpen, onClose } = useDisclosure();
+
 
     useEffect(() => {
         const fetchJob = async () => {
@@ -27,12 +43,8 @@ const JobDetail = () => {
                     throw new Error('Job ID is missing');
                 }
 
-                const response = await axios.get(`http://localhost:8080/api/recruiter/getJobById/${jobId}`);
-                if (response.status === 200 && response.data) {
-                    setJob(response.data);
-                } else {
-                    throw new Error('Job not found');
-                }
+                const jobData = await fetchJobById(jobId);
+                setJob(jobData);
             } catch (error) {
                 console.error('Error fetching job:', error);
                 toast({
@@ -54,18 +66,13 @@ const JobDetail = () => {
     const fetchApplicants = async () => {
         setLoadingApplicants(true);
         try {
-            const response = await axios.get(`http://localhost:8080/api/recruiter/getApplicantsByJobId/${jobId}`);
-            if (response.status === 200 && response.data) {
-                setApplicants(response.data);
-            } else {
-                setApplicants([]);
-                throw new Error('No applicants found');
-            }
+            const applicantsData = await fetchApplicantsByJobId(jobId);
+            setApplicants(applicantsData);
         } catch (error) {
             console.error('Error fetching applicants:', error);
             toast({
-                title: 'Error',
-                description: 'Failed to load applicants. Please try again later.',
+                title: 'No applicants for this job!',
+                description: 'There are currently no Applicants for this job',
                 status: 'error',
                 duration: 3000,
                 isClosable: true,
@@ -77,8 +84,8 @@ const JobDetail = () => {
 
     const handleDelete = async () => {
         try {
-            const response = await axios.delete(`http://localhost:8080/api/recruiter/deleteJob/${jobId}`);
-            if (response.status === 200) {
+            const isDeleted = await deleteJobById(jobId);
+            if (isDeleted) {
                 toast({
                     title: 'Success',
                     description: 'Job deleted successfully. Redirecting to dashboard.',
@@ -104,11 +111,8 @@ const JobDetail = () => {
 
     const handleStatusChange = async (applicantId, newStatus) => {
         try {
-            const response = await axios.put(
-                `http://localhost:8080/api/recruiter/updateApplicantStatus/${applicantId}`,
-                { status: newStatus, jobId } // Include jobId in the request body
-            );
-            if (response.status === 200) {
+            const isUpdated = await updateApplicantStatus(applicantId, newStatus, jobId);
+            if (isUpdated) {
                 setApplicants((prevApplicants) =>
                     prevApplicants.map((applicant) =>
                         applicant._id === applicantId ? { ...applicant, status: newStatus } : applicant
