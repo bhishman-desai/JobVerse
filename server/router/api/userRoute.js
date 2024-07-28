@@ -6,7 +6,6 @@ import UserInteraction from '../../model/UserInteraction.js';
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-  console.log('GET /api/users route hit');
   try {
     const users = await User.find({}, 'username profile');
     res.status(200).json(users);

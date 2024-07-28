@@ -13,14 +13,14 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:3000",
+        origin: "https://job-verse.vercel.app/",
         methods: ["GET", "POST"],
     }
 });
 
 app.use(express.json());
 app.use(cors({
-    origin: "http://localhost:3000",
+    origin: "https://job-verse.vercel.app/",
 }));
 app.use(morgan('tiny'));
 app.disable('x-powered-by');
@@ -32,11 +32,8 @@ app.get('/', (req, res) => {
 app.use('/api', apiRoutes);
 
 io.on('connection', (socket) => {
-    console.log('New client connected');
-
     socket.on('joinChat', async (username) => {
         socket.join(username);
-        console.log(`User ${username} joined the chat`);
 
         const messages = await Message.find({
             $or: [{ senderUsername: username }, { receiverUsername: username }]
@@ -50,8 +47,6 @@ io.on('connection', (socket) => {
     });
 
     socket.on('sendMessage', async (message) => {
-        console.log('Message received on server:', message);
-
         const newMessage = new Message(message);
         await newMessage.save();
 
@@ -67,7 +62,6 @@ io.on('connection', (socket) => {
         );
 
         io.to(message.receiverUsername).emit('receiveMessage', message);
-        console.log(`Message sent to ${message.receiverUsername}`);
     });
 
     socket.on('disconnect', () => {
@@ -80,7 +74,7 @@ const port = 8080;
 connect().then(() => {
     try {
         server.listen(port, () => {
-            console.log(`Server connected to http://localhost:${port}`);
+            console.log(`Server connected successfully!`);
         });
     } catch (error) {
         console.log('Cannot connect to the server.');

@@ -6,7 +6,7 @@ import avatar from '../assets/Profile.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane, faArrowLeft, faCommentDots, faAngleDown } from '@fortawesome/free-solid-svg-icons';
 
-const socket = io('http://localhost:8080');
+const socket = io('https://job-verse.vercel.app/');
 
 const ChatWidget = () => {
   const [users, setUsers] = useState([]);
@@ -117,7 +117,6 @@ const ChatWidget = () => {
   const handleSendMessage = () => {
     if (newMessage && selectedUser && currentUsername) {
       if (currentUsername === selectedUser.username) {
-        console.error('Cannot send message to yourself');
         return;
       }
 

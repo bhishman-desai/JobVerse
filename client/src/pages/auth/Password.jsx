@@ -35,11 +35,7 @@ export default function Password() {
       });
 
       loginPromise.then((res) => {
-        console.log('API Response:', res);
-        console.log('Response Data:', res.data);
         const { token, username } = res.data;
-        console.log('Extracted Token:', token);
-        console.log('Extracted User Name:', username);
         localStorage.setItem("token", token);
         localStorage.setItem('username', username);
         sessionStorage.setItem('username', username);
