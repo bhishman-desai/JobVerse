@@ -101,9 +101,6 @@ const JobsDashboard = () => {
                 colorScheme="teal"
                 aria-label="Create job"
                 mb={5}
-                position="fixed"
-                top={buttonPosition.top}
-                right={buttonPosition.right}
                 borderRadius="full"
                 size={{ base: "md", md: "lg" }}
                 boxShadow="md"

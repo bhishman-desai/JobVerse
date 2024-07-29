@@ -1,31 +1,45 @@
-import { lazy } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Box } from "@chakra-ui/react";
-import withLayout from "./components/layout/withLayout";
-import "./App.css";
+import React, { useEffect } from 'react';
+import { lazy } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Box } from '@chakra-ui/react';
+import withLayout from './components/layout/withLayout';
+import './App.css';
+import { useNotificationStore } from './store/store';
 
-const Home = lazy(() => import("./pages/Home"));
-const FaqPage = lazy(() => import("./pages/Faq"));
-const ContactPage = lazy(() => import("./pages/Contact"));
+
+const Home = lazy(() => import('./pages/Home'));
+const FaqPage = lazy(() => import('./pages/Faq'));
+const ContactPage = lazy(() => import('./pages/Contact'));
 
 /* Auth Pages */
-const UserNamePage = lazy(() => import("./pages/auth/Username"));
-const PasswordPage = lazy(() => import("./pages/auth/Password"));
-const RegisterPage = lazy(() => import("./pages/auth/Register"));
-const ProfilePage = lazy(() => import("./pages/auth/Profile"));
-const RecoveryPage = lazy(() => import("./pages/auth/Recovery"));
-const ResetPage = lazy(() => import("./pages/auth/Reset"));
+const UserNamePage = lazy(() => import('./pages/auth/Username'));
+const PasswordPage = lazy(() => import('./pages/auth/Password'));
+const RegisterPage = lazy(() => import('./pages/auth/Register'));
+const ProfilePage = lazy(() => import('./pages/auth/Profile'));
+const RecoveryPage = lazy(() => import('./pages/auth/Recovery'));
+const ResetPage = lazy(() => import('./pages/auth/Reset'));
 
 /* Recruiter Pages*/
-const JobCreation = lazy(()=>import("./pages/recruiter/JobCreation"))
-const JobsDashboard = lazy(()=>import("./pages/recruiter/JobsDashboard"))
-const UpdateJob = lazy(()=>import("./pages/recruiter/UpdateJob"))
-const JobDetail = lazy(()=>import("./pages/recruiter/JobDetail"))
+const JobCreation = lazy(() => import('./pages/recruiter/JobCreation'));
+const JobsDashboard = lazy(() => import('./pages/recruiter/JobsDashboard'));
+const UpdateJob = lazy(() => import('./pages/recruiter/UpdateJob'));
+const JobDetail = lazy(() => import('./pages/recruiter/JobDetail'));
+
+const Notifications = lazy(() => import('./pages/notifications'));
 
 /* Page Not Found */
-const PageNotFoundPage = lazy(() => import("./components/pageNotFound"));
+const PageNotFoundPage = lazy(() => import('./components/pageNotFound'));
 
 function App() {
+  const initializeSocket = useNotificationStore((state) => state.initializeSocket);
+
+    useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      initializeSocket(token);
+    }
+  }, []);
+
   return (
     <Box>
       <Router>
@@ -49,6 +63,8 @@ function App() {
           <Route element={withLayout(JobDetail)()}path="/recruiter/job/:jobId" />
 
           <Route element={withLayout(UpdateJob)()} path="/recruiter/update-job/:id" />
+
+          <Route element={withLayout(Notifications)()} path="/notifications" />
 
           {/*404 Page Not Found*/}
           <Route element={withLayout(PageNotFoundPage)()} path="*" />

@@ -3,10 +3,11 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import connect from './config/dBConnection.js';
+import {initializeSocket} from './config/socketConnection.js';
 import apiRoutes from "./router/apiRoutes.js";
+import http from 'http';
 
 const app = express();
-
 /* Middlewares */
 app.use(express.json());
 app.use(cors());
@@ -23,10 +24,13 @@ app.get('/', (req, res) => {
 /* API routes starting point */
 app.use('/api', apiRoutes);
 
+const server = http.createServer(app);
+initializeSocket(server);
+
 /* Start server only when we have valid connection */
 connect().then(() => {
     try {
-        app.listen(port, () => {
+        server.listen(port, () => {
             console.log(`Server connected to http://localhost:${port}`);
         })
     } catch (error) {
@@ -35,4 +39,3 @@ connect().then(() => {
 }).catch(error => {
     console.log("Invalid database connection!");
 })
-

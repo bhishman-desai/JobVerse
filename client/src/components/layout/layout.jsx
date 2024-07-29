@@ -6,7 +6,7 @@ import { Flex, Spinner } from '@chakra-ui/react';
 
 const Layout = ({ children }) => {
     const location = useLocation();
-    const showLayout = ['/', '/about', '/faq', '/contact-us'];
+    const showLayout = ['/', '/about', '/faq', '/contact-us', '/recruiter/dashboard','/notifications'];
     const currentPath = location.pathname;
 
     return (
