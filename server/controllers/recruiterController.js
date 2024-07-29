@@ -89,8 +89,6 @@ export async function updateApplicantStatus(req, res) {
 
 
 
-
-
 export async function createJob(req, res) {
     const {
         positionName,
