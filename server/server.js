@@ -13,14 +13,14 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "https://job-verse.vercel.app/",
+        origin: "*",
         methods: ["GET", "POST"],
     }
 });
 
 app.use(express.json());
 app.use(cors({
-    origin: "https://job-verse.vercel.app/",
+    origin: "*",
 }));
 app.use(morgan('tiny'));
 app.disable('x-powered-by');
