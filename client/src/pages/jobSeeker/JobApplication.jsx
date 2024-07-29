@@ -1,11 +1,8 @@
-/* Jayrajsinh Mahavirsinh Jadeja */
-
 import React, { useState } from "react";
 import {
   Box,
   Heading,
   Input,
-  Textarea,
   Button,
   FormControl,
   FormLabel,
@@ -13,19 +10,21 @@ import {
 } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { applyForJob } from "./helper/jobApis";
+import useFetch from "../../hooks/fetch.hook";
 
 const JobApplication = () => {
   const { jobId } = useParams();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
   const [resume, setResume] = useState(null);
-  const [coverLetter, setCoverLetter] = useState("");
+  const [coverLetter, setCoverLetter] = useState(null);
   const [loading, setLoading] = useState(false);
   const toast = useToast();
   const navigate = useNavigate();
 
+  // Fetch user data
+  const [{ isLoading, apiData, serverError }] = useFetch("");
+
   const handleResumeChange = (e) => setResume(e.target.files[0]);
-  const handleCoverLetterChange = (e) => setCoverLetter(e.target.value);
+  const handleCoverLetterChange = (e) => setCoverLetter(e.target.files[0]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,13 +32,19 @@ const JobApplication = () => {
 
     try {
       const formData = new FormData();
-      formData.append("name", name);
-      formData.append("email", email);
+      formData.append("name", apiData?.username || "");
+      formData.append("email", apiData?.email || "");
       formData.append("resume", resume);
       formData.append("coverLetter", coverLetter);
       formData.append("jobId", jobId);
 
-      await applyForJob(formData);
+      // Log FormData for debugging
+      for (let pair of formData.entries()) {
+        console.log(`${pair[0]}: ${pair[1]}`);
+      }
+
+      const response = await applyForJob(formData);
+      console.log(response); // Log the response for debugging
 
       toast({
         title: "Application Submitted",
@@ -51,6 +56,7 @@ const JobApplication = () => {
 
       navigate("/job-seeker/jobs");
     } catch (error) {
+      console.error("Error submitting application:", error); // Log the error
       toast({
         title: "Error",
         description: "Failed to submit application.",
@@ -63,6 +69,9 @@ const JobApplication = () => {
     }
   };
 
+  if (isLoading) return <p>Loading...</p>;
+  if (serverError) return <p>Error fetching user data.</p>;
+
   return (
     <Box p={6} maxW="container.md" mx="auto">
       <Heading as="h1" size="lg" mb={4}>
@@ -71,31 +80,19 @@ const JobApplication = () => {
       <form onSubmit={handleSubmit}>
         <FormControl mb={4} isRequired>
           <FormLabel>Name</FormLabel>
-          <Input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
+          <Input type="text" value={apiData?.username || ""} isReadOnly />
         </FormControl>
         <FormControl mb={4} isRequired>
           <FormLabel>Email</FormLabel>
-          <Input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+          <Input type="email" value={apiData?.email || ""} isReadOnly />
         </FormControl>
         <FormControl mb={4}>
           <FormLabel>Resume (PDF)</FormLabel>
           <Input type="file" accept=".pdf" onChange={handleResumeChange} />
         </FormControl>
         <FormControl mb={4}>
-          <FormLabel>Cover Letter</FormLabel>
-          <Textarea
-            value={coverLetter}
-            onChange={handleCoverLetterChange}
-            placeholder="Write your cover letter here..."
-          />
+          <FormLabel>Cover Letter (PDF)</FormLabel>
+          <Input type="file" accept=".pdf" onChange={handleCoverLetterChange} />
         </FormControl>
         <Button type="submit" colorScheme="teal" isLoading={loading}>
           Apply Now

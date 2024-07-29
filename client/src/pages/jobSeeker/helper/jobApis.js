@@ -2,10 +2,26 @@ import axios from "axios";
 
 axios.defaults.baseURL = process.env.REACT_APP_SERVER_DOMAIN;
 
+// Get username (and userId) of the logged-in user
+export const getUsername = async () => {
+  const token = localStorage.getItem("token");
+  try {
+    const response = await axios.get(`/api/profile`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data; // Assuming this endpoint returns { userId }
+  } catch (error) {
+    throw new Error("Error fetching user details");
+  }
+};
+
 /* Fetch all jobs */
 export const fetchJobs = async () => {
+  const token = localStorage.getItem("token");
   try {
-    const response = await axios.get(`/api/jobSeeker/jobs`);
+    const response = await axios.get(`/api/jobSeeker/jobs`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching jobs:", error);
@@ -15,8 +31,11 @@ export const fetchJobs = async () => {
 
 /* Fetch a specific job by ID */
 export const fetchJobById = async (id) => {
+  const token = localStorage.getItem("token");
   try {
-    const response = await axios.get(`/api/jobSeeker/jobs/${id}`);
+    const response = await axios.get(`/api/jobSeeker/jobs/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching job details:", error);
@@ -26,23 +45,31 @@ export const fetchJobById = async (id) => {
 
 /* Apply for a job */
 export const applyForJob = async (formData) => {
+  const token = localStorage.getItem("token");
   try {
     const response = await axios.post(`/api/jobSeeker/apply`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.data;
   } catch (error) {
-    console.error("Error applying for job:", error);
+    console.error(
+      "Error applying for job:",
+      error.response ? error.response.data : error.message
+    );
     throw new Error("Failed to apply for job.");
   }
 };
 
 /* Fetch job applications */
 export const fetchApplications = async () => {
+  const token = localStorage.getItem("token");
   try {
-    const response = await axios.get(`/api/jobSeeker/applications`);
+    const response = await axios.get(`/api/jobSeeker/applications`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching applications:", error);
@@ -52,8 +79,11 @@ export const fetchApplications = async () => {
 
 /* Fetch user profile */
 export const fetchUserProfile = async () => {
+  const token = localStorage.getItem("token");
   try {
-    const response = await axios.get(`/api/profile`);
+    const response = await axios.get(`/api/profile`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching profile:", error);
@@ -63,10 +93,12 @@ export const fetchUserProfile = async () => {
 
 /* Update user profile */
 export const updateUserProfile = async (profileData) => {
+  const token = localStorage.getItem("token");
   try {
     const response = await axios.put(`/api/profile`, profileData, {
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.data;

@@ -17,10 +17,15 @@ const RecoveryPage = lazy(() => import("./pages/auth/Recovery"));
 const ResetPage = lazy(() => import("./pages/auth/Reset"));
 
 /* Recruiter Pages*/
-const JobCreation = lazy(()=>import("./pages/recruiter/JobCreation"))
-const JobsDashboard = lazy(()=>import("./pages/recruiter/JobsDashboard"))
-const UpdateJob = lazy(()=>import("./pages/recruiter/UpdateJob"))
-const JobDetail = lazy(()=>import("./pages/recruiter/JobDetail"))
+const JobCreation = lazy(() => import("./pages/recruiter/JobCreation"));
+const JobsDashboard = lazy(() => import("./pages/recruiter/JobsDashboard"));
+const UpdateJob = lazy(() => import("./pages/recruiter/UpdateJob"));
+const JobDetail = lazy(() => import("./pages/recruiter/JobDetail"));
+
+/* Job Seeker Pages */
+const JobListings = lazy(() => import("./pages/jobSeeker/JobListings"));
+const JobApplication = lazy(() => import("./pages/jobSeeker/JobApplication"));
+const JobDetails = lazy(() => import("./pages/jobSeeker/JobDetails"));
 
 /* Page Not Found */
 const PageNotFoundPage = lazy(() => import("./components/pageNotFound"));
@@ -44,11 +49,34 @@ function App() {
           <Route element={withLayout(ResetPage)()} path="/reset" />
 
           {/* Recruiter Routes */}
-          <Route element={withLayout(JobCreation)()} path="/recruiter/create-job" />
-          <Route element={withLayout(JobsDashboard)()} path="/recruiter/dashboard" />
-          <Route element={withLayout(JobDetail)()}path="/recruiter/job/:jobId" />
+          <Route
+            element={withLayout(JobCreation)()}
+            path="/recruiter/create-job"
+          />
+          <Route
+            element={withLayout(JobsDashboard)()}
+            path="/recruiter/dashboard"
+          />
+          <Route
+            element={withLayout(JobDetail)()}
+            path="/recruiter/job/:jobId"
+          />
 
-          <Route element={withLayout(UpdateJob)()} path="/recruiter/update-job/:id" />
+          <Route
+            element={withLayout(UpdateJob)()}
+            path="/recruiter/update-job/:id"
+          />
+
+          {/* Job Seeker Routes */}
+          <Route element={withLayout(JobListings)()} path="/job-seeker/jobs" />
+          <Route
+            element={withLayout(JobApplication)()}
+            path="/job-seeker/job/:jobId/apply"
+          />
+          <Route
+            element={withLayout(JobDetails)()}
+            path="/job-seeker/jobs/:jobId"
+          />
 
           {/*404 Page Not Found*/}
           <Route element={withLayout(PageNotFoundPage)()} path="*" />

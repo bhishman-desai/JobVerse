@@ -1,5 +1,3 @@
-/* Jayrajsinh Mahavirsinh Jadeja */
-
 import React, { useState, useEffect } from "react";
 import {
   Box,
@@ -12,7 +10,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchJobById, applyForJob } from "./helper/jobApis"; // Adjust the import path as needed
+import { fetchJobById } from "./helper/jobApis";
 
 const JobDetails = () => {
   const [job, setJob] = useState(null);
@@ -27,7 +25,6 @@ const JobDetails = () => {
         const jobData = await fetchJobById(jobId);
         setJob(jobData);
       } catch (error) {
-        console.error("Error fetching job:", error);
         toast({
           title: "Error",
           description: "Failed to load job details.",
@@ -35,7 +32,7 @@ const JobDetails = () => {
           duration: 3000,
           isClosable: true,
         });
-        navigate("/jobs"); // Redirect to job listings if error occurs
+        navigate("/job-seeker/jobs");
       } finally {
         setLoading(false);
       }
@@ -43,29 +40,6 @@ const JobDetails = () => {
 
     fetchJob();
   }, [jobId, navigate, toast]);
-
-  const handleApply = async () => {
-    try {
-      await applyForJob(jobId);
-      toast({
-        title: "Success",
-        description: "Applied for job successfully.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-      navigate("/applications"); // Redirect to applications page or dashboard
-    } catch (error) {
-      console.error("Error applying for job:", error);
-      toast({
-        title: "Error",
-        description: "Failed to apply for job.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
 
   if (loading) {
     return (
@@ -107,7 +81,10 @@ const JobDetails = () => {
         <Text fontSize="md" whiteSpace="pre-line">
           {job.jobDescription}
         </Text>
-        <Button colorScheme="teal" onClick={handleApply}>
+        <Button
+          colorScheme="teal"
+          onClick={() => navigate(`/job-seeker/job/${job._id}/apply`)}
+        >
           Apply Now
         </Button>
       </Stack>
