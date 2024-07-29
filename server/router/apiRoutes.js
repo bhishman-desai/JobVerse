@@ -12,5 +12,5 @@ router.use("/health", testRoute);
 router.use("/recruiter", RecjobMgmt);
 router.use("/users", userRoutes);
 router.use("/jobSeeker", jobSeekerRoutes);
-
+router.use("/search",SearchFunc)
 export default router;
