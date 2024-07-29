@@ -1,4 +1,3 @@
-/* Author: Bhishman Desai */
 import { Router } from "express";
 import authRoute from "./api/authRoute.js";
 import testRoute from "./api/testRoute.js";
@@ -12,8 +11,6 @@ router.use("/", authRoute);
 router.use("/health", testRoute);
 router.use("/recruiter", RecjobMgmt);
 router.use("/users", userRoutes);
-
-/* Jayrajsinh Mahavirsinh Jadeja */
 router.use("/jobSeeker", jobSeekerRoutes);
 
 export default router;
