@@ -1,26 +1,47 @@
+/* Jayrajsinh Mahavirsinh Jadeja */
+
 import Job from "../model/Job.js";
 import Applicant from "../model/Applicants.js";
-import cloudinary from "cloudinary";
+import { v2 as cloudinary } from "cloudinary";
 import multer from "multer";
 import dotenv from "dotenv";
 
 dotenv.config();
 
 cloudinary.config({
-  cloudinary_url: process.env.CLOUDINARY_URL,
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 const upload = multer({ storage: multer.memoryStorage() });
 
 const uploadToCloudinary = async (file) => {
-  return new Promise((resolve, reject) => {
+  if (!file || !file.buffer) {
+    throw new Error("Invalid file object");
+  }
+
+  const fileBuffer =
+    file.buffer instanceof ArrayBuffer ? Buffer.from(file.buffer) : file.buffer;
+
+  const timeout = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error("Request timed out")), 30000)
+  );
+
+  const uploadPromise = new Promise((resolve, reject) => {
     cloudinary.uploader
-      .upload_stream((error, result) => {
-        if (error) reject(error);
-        else resolve(result);
+      .upload_stream({ resource_type: "auto" }, (error, result) => {
+        if (error) {
+          console.error("Cloudinary error:", error);
+          reject(error);
+        } else {
+          resolve(result);
+        }
       })
-      .end(file.buffer);
+      .end(fileBuffer);
   });
+
+  return Promise.race([uploadPromise, timeout]);
 };
 
 export async function getAllJobs(req, res) {
@@ -34,20 +55,21 @@ export async function getAllJobs(req, res) {
 
 export const applyForJob = async (req, res) => {
   const { name, email, jobId } = req.body;
-  const resumeFile = req.file?.resume; // `req.file` for single file, `req.files` for multiple files
-  const coverLetterFile = req.file?.coverLetter;
+  const resumeFile = req.files?.resume;
+  console.log("req.files", req.files);
+  console.log("req.files?.resume", resumeFile[0]);
+  const coverLetterFile = req.files?.coverLetter;
 
   if (!name || !email || !jobId) {
     return res.status(400).json({ message: "Required fields are missing" });
   }
 
   try {
-    // Handle file uploads
     const resumeUpload = resumeFile
-      ? await uploadToCloudinary(resumeFile)
+      ? await uploadToCloudinary(resumeFile[0].buffer)
       : null;
     const coverLetterUpload = coverLetterFile
-      ? await uploadToCloudinary(coverLetterFile)
+      ? await uploadToCloudinary(coverLetterFile[0].buffer)
       : null;
 
     const newApplicant = new Applicant({

@@ -1,3 +1,5 @@
+/* Jayrajsinh Mahavirsinh Jadeja */
+
 import multer from "multer";
 import { Router } from "express";
 import {
@@ -15,7 +17,7 @@ router.post(
   "/apply",
   upload.fields([{ name: "resume" }, { name: "coverLetter" }]),
   applyForJob
-); // Handle file upload
+);
 router.get("/jobs/:id", getJobById);
 router.get("/applicants/:id", getApplicantsByJobId);
 

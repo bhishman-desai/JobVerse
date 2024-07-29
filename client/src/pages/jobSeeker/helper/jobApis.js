@@ -1,15 +1,17 @@
+/* Jayrajsinh Mahavirsinh Jadeja */
+
 import axios from "axios";
 
 axios.defaults.baseURL = process.env.REACT_APP_SERVER_DOMAIN;
 
-// Get username (and userId) of the logged-in user
+/* Get username (and userId) of the logged-in user */
 export const getUsername = async () => {
   const token = localStorage.getItem("token");
   try {
     const response = await axios.get(`/api/profile`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    return response.data; // Assuming this endpoint returns { userId }
+    return response.data;
   } catch (error) {
     throw new Error("Error fetching user details");
   }

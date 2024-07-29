@@ -1,3 +1,5 @@
+/* Jayrajsinh Mahavirsinh Jadeja */
+
 import React, { useState } from "react";
 import {
   Box,
@@ -20,7 +22,6 @@ const JobApplication = () => {
   const toast = useToast();
   const navigate = useNavigate();
 
-  // Fetch user data
   const [{ isLoading, apiData, serverError }] = useFetch("");
 
   const handleResumeChange = (e) => setResume(e.target.files[0]);
@@ -38,13 +39,12 @@ const JobApplication = () => {
       formData.append("coverLetter", coverLetter);
       formData.append("jobId", jobId);
 
-      // Log FormData for debugging
       for (let pair of formData.entries()) {
         console.log(`${pair[0]}: ${pair[1]}`);
       }
 
       const response = await applyForJob(formData);
-      console.log(response); // Log the response for debugging
+      console.log(response);
 
       toast({
         title: "Application Submitted",
@@ -56,7 +56,7 @@ const JobApplication = () => {
 
       navigate("/job-seeker/jobs");
     } catch (error) {
-      console.error("Error submitting application:", error); // Log the error
+      console.error("Error submitting application:", error);
       toast({
         title: "Error",
         description: "Failed to submit application.",

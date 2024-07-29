@@ -1,6 +1,8 @@
+/* Jayrajsinh Mahavirsinh Jadeja */
+
 import React, { useState, useEffect } from "react";
 import { Box, Heading, Text, Stack, Button, useToast } from "@chakra-ui/react";
-import { fetchJobs } from "./helper/jobApis"; // Adjust the import path as needed
+import { fetchJobs } from "./helper/jobApis";
 import { useNavigate } from "react-router-dom";
 
 const JobListings = () => {
@@ -12,7 +14,7 @@ const JobListings = () => {
   useEffect(() => {
     const loadJobs = async () => {
       try {
-        const jobData = await fetchJobs(); // Fetch jobs from the API
+        const jobData = await fetchJobs();
         setJobs(jobData);
       } catch (error) {
         console.error("Error fetching jobs:", error);
