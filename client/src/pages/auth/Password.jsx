@@ -1,4 +1,3 @@
-/* Author: Bhishman Desai */
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import avatar from "../../assets/Profile.png";
@@ -36,8 +35,10 @@ export default function Password() {
       });
 
       loginPromise.then((res) => {
-        let { token } = res.data;
+        const { token, username } = res.data;
         localStorage.setItem("token", token);
+        localStorage.setItem('username', username);
+        sessionStorage.setItem('username', username);
         navigate("/profile");
       });
     },
@@ -52,7 +53,6 @@ export default function Password() {
       <Toaster position="top-center" reverseOrder={false}></Toaster>
 
       <div className="flex flex-col justify-center items-center min-h-screen">
-        {/* Responsive container for the form */}
         <div className={`${styles.glass}`}>
           <div className="title flex flex-col items-center">
             <h4 className="text-4xl sm:text-5xl font-bold">
