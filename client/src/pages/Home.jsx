@@ -58,12 +58,12 @@ const Home = () => {
 
         <Box flex="1" marginLeft={{ lg: "4" }}>
           <Text fontSize={{ base: "2xl", sm: "3xl", md: "4xl" }} mb={4}>
-            Are you an <Text as="span" color="brand.100">employer</Text> looking for the perfect candidate?
+            Are you an <Text as="span" color="orange">employer</Text> looking for the perfect candidate?
           </Text>
           <Text fontSize={{ base: "lg", sm: "xl", md: "2xl" }} mb={8}>
             Post your job now!
           </Text>
-          <Button as="a" href="/post-job" colorScheme="red" size="lg">I want to recruit now!</Button>
+          <Button as="a" href="/post-job" colorScheme="orange" size="lg">I want to recruit now!</Button>
         </Box>
       </Flex>
     </Box>

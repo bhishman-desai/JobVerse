@@ -1,24 +1,23 @@
-import React, { useEffect } from 'react';
-import { lazy } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Box } from '@chakra-ui/react';
-import withLayout from './components/layout/withLayout';
-import './App.css';
-import { useSocketStore } from './store/store';
-import { getUsername } from './pages/auth/helper/api';
+import React, { useEffect } from "react";
+import { lazy } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Box } from "@chakra-ui/react";
+import withLayout from "./components/layout/withLayout";
+import "./App.css";
+import { useSocketStore } from "./store/store";
+import { getUsername } from "./pages/auth/helper/api";
 
-
-const Home = lazy(() => import('./pages/Home'));
-const FaqPage = lazy(() => import('./pages/Faq'));
-const ContactPage = lazy(() => import('./pages/Contact'));
+const Home = lazy(() => import("./pages/Home"));
+const FaqPage = lazy(() => import("./pages/Faq"));
+const ContactPage = lazy(() => import("./pages/Contact"));
 
 /* Auth Pages */
-const UserNamePage = lazy(() => import('./pages/auth/Username'));
-const PasswordPage = lazy(() => import('./pages/auth/Password'));
-const RegisterPage = lazy(() => import('./pages/auth/Register'));
-const ProfilePage = lazy(() => import('./pages/auth/Profile'));
-const RecoveryPage = lazy(() => import('./pages/auth/Recovery'));
-const ResetPage = lazy(() => import('./pages/auth/Reset'));
+const UserNamePage = lazy(() => import("./pages/auth/Username"));
+const PasswordPage = lazy(() => import("./pages/auth/Password"));
+const RegisterPage = lazy(() => import("./pages/auth/Register"));
+const ProfilePage = lazy(() => import("./pages/auth/Profile"));
+const RecoveryPage = lazy(() => import("./pages/auth/Recovery"));
+const ResetPage = lazy(() => import("./pages/auth/Reset"));
 const SearchResults = lazy(() => import("./pages/search/search"));
 /* Recruiter Pages*/
 const JobCreation = lazy(() => import("./pages/recruiter/JobCreation"));
@@ -27,23 +26,23 @@ const UpdateJob = lazy(() => import("./pages/recruiter/UpdateJob"));
 const JobDetail = lazy(() => import("./pages/recruiter/JobDetail"));
 
 /* Job Seeker Pages */
-const JobListings = lazy(() => import("./pages/jobSeeker/JobListings"));
 const JobApplication = lazy(() => import("./pages/jobSeeker/JobApplication"));
 const JobDetails = lazy(() => import("./pages/jobSeeker/JobDetails"));
+const Applications = lazy(() => import("./pages/jobSeeker/Applications"));
 
 /* Notifications Pages */
 
-const Notifications = lazy(() => import('./pages/notifications'));
+const Notifications = lazy(() => import("./pages/notifications"));
 
 /* Page Not Found */
-const PageNotFoundPage = lazy(() => import('./components/pageNotFound'));
+const PageNotFoundPage = lazy(() => import("./components/pageNotFound"));
 
 function App() {
   const initializeSocket = useSocketStore((state) => state.initializeSocket);
 
   useEffect(() => {
     const loadData = async () => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (token) {
         const user = await getUsername();
         initializeSocket(token, user.username);
@@ -60,7 +59,7 @@ function App() {
           <Route element={withLayout(PageNotFoundPage)()} path="/about" />
           <Route element={withLayout(FaqPage)()} path="/faq" />
           <Route element={withLayout(ContactPage)()} path="/contact-us" />
-          <Route  element={withLayout(SearchResults)()} path="/search" />
+          <Route element={withLayout(SearchResults)()} path="/search" />
           {/*Auth Routes*/}
           <Route element={withLayout(UserNamePage)()} path="/login" />
           <Route element={withLayout(PasswordPage)()} path="/password" />
@@ -89,7 +88,6 @@ function App() {
           />
 
           {/* Job Seeker Routes */}
-          <Route element={withLayout(JobListings)()} path="/job-seeker/jobs" />
           <Route
             element={withLayout(JobApplication)()}
             path="/job-seeker/job/:jobId/apply"
@@ -97,6 +95,10 @@ function App() {
           <Route
             element={withLayout(JobDetails)()}
             path="/job-seeker/jobs/:jobId"
+          />
+          <Route
+            element={withLayout(Applications)()}
+            path="/job-seeker/applications"
           />
 
           <Route element={withLayout(Notifications)()} path="/notifications" />
