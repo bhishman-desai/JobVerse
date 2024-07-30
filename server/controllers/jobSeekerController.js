@@ -8,14 +8,17 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+// Configure Cloudinary with environment variables
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+// Configure multer for handling file uploads
 const upload = multer({ storage: multer.memoryStorage() });
 
+// Function to upload a file to Cloudinary
 const uploadToCloudinary = async (file) => {
   if (!file || !file.buffer) {
     throw new Error("Invalid file object");
@@ -24,10 +27,12 @@ const uploadToCloudinary = async (file) => {
   const fileBuffer =
     file.buffer instanceof ArrayBuffer ? Buffer.from(file.buffer) : file.buffer;
 
+  // Set a timeout for the upload request
   const timeout = new Promise((_, reject) =>
     setTimeout(() => reject(new Error("Request timed out")), 30000)
   );
 
+  // Promise to handle Cloudinary upload
   const uploadPromise = new Promise((resolve, reject) => {
     cloudinary.uploader
       .upload_stream({ resource_type: "auto" }, (error, result) => {
@@ -44,6 +49,7 @@ const uploadToCloudinary = async (file) => {
   return Promise.race([uploadPromise, timeout]);
 };
 
+// Controller to get all jobs
 export async function getAllJobs(req, res) {
   try {
     const jobs = await Job.find();
@@ -53,6 +59,7 @@ export async function getAllJobs(req, res) {
   }
 }
 
+// Controller to apply for a job
 export const applyForJob = async (req, res) => {
   const { name, email, jobId } = req.body;
   const resumeFile = req.files?.resume;
@@ -85,6 +92,7 @@ export const applyForJob = async (req, res) => {
   }
 };
 
+// Controller to get applicants by job ID
 export async function getApplicantsByJobId(req, res) {
   const { id } = req.params;
   if (!id) {
@@ -109,6 +117,7 @@ export async function getApplicantsByJobId(req, res) {
   }
 }
 
+// Controller to get a job by ID
 export const getJobById = async (req, res) => {
   try {
     const job = await Job.findById(req.params.id);
@@ -118,5 +127,19 @@ export const getJobById = async (req, res) => {
     res.status(200).json(job);
   } catch (error) {
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Controller to get user applications by email
+export const getUserApplications = async (req, res) => {
+  try {
+    const email = req.params.email;
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+    const applications = await Applicant.find({ email }).populate("jobId");
+    res.status(200).json(applications);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
