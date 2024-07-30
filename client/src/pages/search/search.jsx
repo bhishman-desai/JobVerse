@@ -73,13 +73,11 @@ const JobSearch = () => {
   const totalPages = Math.ceil(jobs.length / jobsPerPage);
   const paginatedJobs = jobs.slice((currentPage - 1) * jobsPerPage, currentPage * jobsPerPage);
 
-  // Responsive design: adjust stack direction and input width based on screen size
   const stackDirection = useBreakpointValue({ base: 'column', md: 'row' });
   const inputWidth = useBreakpointValue({ base: '100%', md: '200px' });
   const [{ apiData, isLoading, serverError }] = useFetch("");
   if (isLoading) return <p>Loading...</p>;
-  if (serverError) return <p>Error fetching user data.</p>;
-
+ 
   return (
     <ChakraProvider>
       <Box p={[2, 3, 5]}>
