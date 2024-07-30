@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   Heading,
-  Button,
   useToast,
-  useBreakpointValue,
   Text,
   Center,
   Table,
@@ -77,35 +75,8 @@ const JobsDashboard = () => {
     }
   };
 
-  const handleCreate = () => {
-    navigate('/recruiter/create-job');
-  };
-
-  const buttonPosition = useBreakpointValue({
-    base: { top: '4', right: '4' },
-    md: { top: '6', right: '6' },
-  });
-
   return (
     <Container maxW="container.xl" p={4}>
-      <Box
-        position="fixed"
-        top={buttonPosition.top}
-        right={buttonPosition.right}
-        zIndex="tooltip"
-      >
-        <Button
-          colorScheme="teal"
-          aria-label="Create job"
-          mb={5}
-          borderRadius="full"
-          size={{ base: 'md', md: 'lg' }}
-          boxShadow="md"
-          onClick={handleCreate}
-        >
-          Create Job
-        </Button>
-      </Box>
       <Heading as="h2" mb={5} size="xl" textAlign="center">
         Jobs Dashboard
       </Heading>

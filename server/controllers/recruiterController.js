@@ -5,7 +5,6 @@ import Applicant from "../model/Applicants.js";
 import User from "../model/User.model.js";
 import mongoose from 'mongoose';
 
-
 // export async function getAllJobs(req, res) {
 //     try {
 //         const jobs = await Job.find();

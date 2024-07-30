@@ -5,12 +5,13 @@ import toast, { Toaster } from "react-hot-toast";
 import { useFormik } from "formik";
 
 import styles from "./styles/Username.module.css";
-import { useAuthStore } from "../../store/store";
+import { useAuthStore, useSocketStore } from "../../store/store";
 import useFetch from "../../hooks/fetch.hook";
 import { passwordValidate } from "./helper/validate";
 import { verifyPassword } from "./helper/api";
 
 export default function Password() {
+  const initializeSocket = useSocketStore((state) => state.initializeSocket);
   const navigate = useNavigate();
   const { username } = useAuthStore((state) => state.auth);
   const [{ isLoading, apiData, serverError }] = useFetch(`/user/${username}`);
@@ -38,7 +39,7 @@ export default function Password() {
         const { token, username } = res.data;
         localStorage.setItem("token", token);
         localStorage.setItem('username', username);
-        sessionStorage.setItem('username', username);
+        initializeSocket(token, username);
         navigate("/profile");
       });
     },
