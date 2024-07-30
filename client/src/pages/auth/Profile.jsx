@@ -11,7 +11,6 @@ import styles from "./styles/Username.module.css";
 import extend from "./styles/Profile.module.css";
 import useFetch from "../../hooks/fetch.hook";
 import { updateUser } from "./helper/api";
-import ChatWidget from '../../components/ChatWidget';
 
 export default function Profile() {
   const [file, setFile] = useState();
@@ -141,7 +140,6 @@ export default function Profile() {
           </form>
         </div>
       </div>
-      <ChatWidget />
     </div>
   );
 }

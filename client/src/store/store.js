@@ -24,7 +24,9 @@ export const useAuthStore = create((set) => ({
 
 export const useJobSearchStore = create((set) => ({
   jobTitle: "",
-  setJobTitle: (title) => set({ jobTitle: title }),
+  setJobTitle: (title) => set({
+    jobTitle: title
+  }),
 }));
 
 export const useSocketStore = create((set) => ({
@@ -158,8 +160,11 @@ export const useSocketStore = create((set) => ({
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
+      const loggedInUsername = localStorage.getItem('username');
+      console.log(loggedInUsername)
+      const filteredUsers = response.data.filter(user => user.username !== loggedInUsername);
       set({
-        users: response.data
+        users: filteredUsers
       });
     } catch (error) {
       console.error('Error fetching users:', error);

@@ -3,10 +3,11 @@ import { useLocation } from 'react-router-dom';
 import Navbar from './navbar';
 import Footer from './footer';
 import { Flex, Spinner } from '@chakra-ui/react';
+import ChatWidget from '../ChatWidget';
 
 const Layout = ({ children }) => {
     const location = useLocation();
-    const navNotRequired = ['/login', '/password', '/register', '/recovery','/reset'];
+    const navNotRequired = ['/login', '/password', '/register', '/recovery', '/reset'];
     const currentPath = location.pathname;
 
     return (
@@ -19,6 +20,7 @@ const Layout = ({ children }) => {
                     </Flex>
                 }>
                     {children}
+                    <ChatWidget />
                 </Suspense>
             </main>
             <Footer />
