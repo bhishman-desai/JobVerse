@@ -101,13 +101,19 @@ const JobDetails = () => {
           {job.jobDescription}
         </Text>
         {userData ? (
-          <Button
-            colorScheme="teal"
-            onClick={() => navigate(`/job-seeker/job/${job._id}/apply`)}
-            size={buttonSize}
-          >
-            Apply Now
-          </Button>
+          userData.roles && userData.roles.Recruiter ? (
+            <Text fontSize={textSize} color="gray.500">
+              Recruiters cannot apply for jobs.
+            </Text>
+          ) : (
+            <Button
+              colorScheme="teal"
+              onClick={() => navigate(`/job-seeker/job/${job._id}/apply`)}
+              size={buttonSize}
+            >
+              Apply Now
+            </Button>
+          )
         ) : (
           <Text fontSize={textSize} color="gray.500">
             Log in to apply for this job

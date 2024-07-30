@@ -1,9 +1,10 @@
 /* Author: Sivaprakash Chittu Hariharan */
+
 import React from "react";
 import { Box, VStack, Text, Button } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
-const JobListing = ({ job }) => {
+const JobListing = ({ job, alreadyApplied }) => {
   const navigate = useNavigate();
 
   const handleApplyClick = () => {
@@ -27,12 +28,13 @@ const JobListing = ({ job }) => {
           <strong>Salary:</strong> ${job.salary}
         </Text>
         <Button
-          colorScheme="teal"
+          colorScheme={alreadyApplied ? "gray" : "teal"}
           size="sm"
           alignSelf="flex-end"
           onClick={handleApplyClick}
+          isDisabled={alreadyApplied}
         >
-          View Details
+          {alreadyApplied ? "Already Applied" : "View Details"}
         </Button>
       </VStack>
     </Box>

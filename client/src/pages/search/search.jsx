@@ -1,3 +1,5 @@
+/* Author: Sivaprakash Chittu Hariharan */
+
 import React, { useState, useEffect } from "react";
 import {
   ChakraProvider,
@@ -15,6 +17,7 @@ import {
 } from "@chakra-ui/react";
 import JobListing from "./helper/jobListings";
 import { fetchJobs } from "./helper/api";
+import { fetchApplicationsByEmail } from "../jobSeeker/helper/jobApis.js";
 import { useJobSearchStore } from "../../store/store.js";
 import useFetch from "../../hooks/fetch.hook";
 
@@ -23,22 +26,23 @@ const JobSearch = () => {
   const [datePosted, setDatePosted] = useState("");
   const [payRange, setPayRange] = useState("");
   const [jobs, setJobs] = useState([]);
+  const [applications, setApplications] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [currentUserId, setCurrentUserId] = useState(null); // State to store current user's ID
+  const [currentUserId, setCurrentUserId] = useState(null);
+  const [email, setEmail] = useState("");
 
   const jobTitle = useJobSearchStore((state) => state.jobTitle);
   const setJobTitle = useJobSearchStore((state) => state.setJobTitle);
 
   const toggleFilters = () => setShowFilters(!showFilters);
 
-  // Custom hook for fetching user data
   const [{ apiData, isLoading, serverError }] = useFetch("");
 
   useEffect(() => {
-    // Fetch current user's data to get user ID
     if (apiData) {
-      setCurrentUserId(apiData._id); // Update with the actual user ID from your API response
+      setCurrentUserId(apiData._id);
+      setEmail(apiData.email);
     }
   }, [apiData]);
 
@@ -50,7 +54,6 @@ const JobSearch = () => {
         datePosted,
         payRange,
       });
-      // Filter out jobs posted by the current user
       const filteredJobs = jobsData.filter(
         (job) => job.recruiterId !== currentUserId
       );
@@ -66,8 +69,20 @@ const JobSearch = () => {
   };
 
   useEffect(() => {
+    if (email) {
+      fetchApplicationsByEmail(email)
+        .then((applicationsData) => {
+          setApplications(applicationsData);
+        })
+        .catch((error) => {
+          console.error("Error fetching applications:", error);
+        });
+    }
+  }, [email]);
+
+  useEffect(() => {
     handleSearch();
-  }, []);
+  }, [email]);
 
   const stackDirection = useBreakpointValue({ base: "column", md: "row" });
   const inputWidth = useBreakpointValue({ base: "100%", md: "200px" });
@@ -149,7 +164,18 @@ const JobSearch = () => {
             {errorMessage ? (
               <Text color="red.500">{errorMessage}</Text>
             ) : (
-              jobs.map((job) => <JobListing key={job._id} job={job} />)
+              jobs.map((job) => {
+                const alreadyApplied = applications.some(
+                  (application) => application.jobId._id === job._id
+                );
+                return (
+                  <JobListing
+                    key={job._id}
+                    job={job}
+                    alreadyApplied={alreadyApplied}
+                  />
+                );
+              })
             )}
           </VStack>
         </Center>
