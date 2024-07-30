@@ -11,7 +11,6 @@ import {
     Tr,
     Th,
     Td,
-    Select,
     Button,
     Text,
     Stack,
@@ -22,6 +21,8 @@ import {
     ModalCloseButton,
     ModalBody,
     useDisclosure,
+    ButtonGroup,
+    useBreakpointValue,
 } from '@chakra-ui/react';
 
 const ApplicantsTab = ({ applicants, loading, onStatusChange }) => {
@@ -35,19 +36,21 @@ const ApplicantsTab = ({ applicants, loading, onStatusChange }) => {
         onOpen();
     };
 
+    const tableVariant = useBreakpointValue({ base: 'simple', md: 'striped' });
+
     return loading ? (
         <Center h="100vh">
             <Spinner size="xl" />
         </Center>
     ) : (
-        <Box p={4}>
-            <Table variant="simple" width="full">
+        <Box p={{ base: 2, md: 4 }}>
+            <Table variant={tableVariant} width="full" size="sm">
                 <Thead>
                     <Tr>
-                        <Th minWidth="150px">Name</Th>
-                        <Th minWidth="200px">Email</Th>
-                        <Th minWidth="150px">Status</Th>
-                        <Th minWidth="200px">Actions</Th>
+                        <Th minWidth={{ base: '100px', md: '150px' }}>Name</Th>
+                        <Th display={{ base: 'none', md: 'table-cell' }} minWidth="200px">Email</Th>
+                        <Th minWidth={{ base: '100px', md: '150px' }}>Status</Th>
+                        <Th minWidth={{ base: '100px', md: '150px' }}>Actions</Th>
                     </Tr>
                 </Thead>
                 <Tbody>
@@ -55,31 +58,43 @@ const ApplicantsTab = ({ applicants, loading, onStatusChange }) => {
                         applicants.map((applicant) => (
                             <Tr key={applicant._id}>
                                 <Td>{applicant.name}</Td>
-                                <Td>{applicant.email}</Td>
+                                <Td display={{ base: 'none', md: 'table-cell' }}>{applicant.email}</Td>
                                 <Td>
-                                    <Select
-                                        value={applicant.status}
-                                        onChange={(e) => onStatusChange(applicant._id, e.target.value)}
-                                        size="sm"
-                                    >
-                                        <option value="Applied">Applied</option>
-                                        <option value="Interview">Interview</option>
-                                        <option value="Accepted">Accepted</option>
-                                        <option value="Rejected">Rejected</option>
-                                    </Select>
+                                    <ButtonGroup size="xs" isAttached flexDirection={{ base: 'column', sm: 'row' }}>
+                                        <Button
+                                            colorScheme={applicant.status === 'Interview' ? 'teal' : 'gray'}
+                                            onClick={() => onStatusChange(applicant._id, 'Interview')}
+                                            mb={{ base: 1, sm: 0 }}
+                                        >
+                                            Interview
+                                        </Button>
+                                        <Button
+                                            colorScheme={applicant.status === 'Accepted' ? 'green' : 'gray'}
+                                            onClick={() => onStatusChange(applicant._id, 'Accepted')}
+                                            mb={{ base: 1, sm: 0 }}
+                                        >
+                                            Accept
+                                        </Button>
+                                        <Button
+                                            colorScheme={applicant.status === 'Rejected' ? 'red' : 'gray'}
+                                            onClick={() => onStatusChange(applicant._id, 'Rejected')}
+                                        >
+                                            Reject
+                                        </Button>
+                                    </ButtonGroup>
                                 </Td>
                                 <Td>
-                                    <Stack direction="row" spacing={3} align="center">
+                                    <Stack direction={{ base: 'column', sm: 'row' }} spacing={2} align="center">
                                         <Button
                                             colorScheme="blue"
-                                            size="sm"
+                                            size="xs"
                                             onClick={() => handleViewPdf(applicant.resume, 'Resume')}
                                         >
                                             View Resume
                                         </Button>
                                         <Button
                                             colorScheme="blue"
-                                            size="sm"
+                                            size="xs"
                                             onClick={() => handleViewPdf(applicant.coverLetter, 'Cover Letter')}
                                         >
                                             View Cover Letter
