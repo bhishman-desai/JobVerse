@@ -1,7 +1,4 @@
-/* Author: Ashish Kumar Guntipalli */
-
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import {
     Heading,
     Button,
@@ -21,6 +18,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { getUsername } from '../auth/helper/api';
 import { EditIcon, DeleteIcon } from '@chakra-ui/icons';
+import { fetchJobs, deleteJob } from './helper/jobApis';
 
 const JobsDashboard = () => {
     const [jobs, setJobs] = useState([]);
@@ -31,37 +29,27 @@ const JobsDashboard = () => {
         const loadData = async () => {
             try {
                 const username = await getUsername();
-                fetchJobs(username.userId); // Pass recruiterId to fetchJobs
+                const jobData = await fetchJobs(username.userId); // Fetch jobs using API function
+                setJobs(jobData);
             } catch (error) {
+                toast({
+                    title: 'Error',
+                    description: 'Failed to fetch jobs.',
+                    status: 'error',
+                    duration: 3000,
+                    isClosable: true,
+                });
                 navigate('/login');
             }
         };
 
         loadData();
-    }, [navigate]);
-
-    const fetchJobs = async (recruiterId) => {
-        try {
-            const response = await axios.get(`/api/recruiter/getJobsForRecruiter`, {
-                params: { recruiterId }
-            });
-            setJobs(response.data);
-        } catch (error) {
-            console.error('Error fetching jobs:', error);
-            toast({
-                title: 'Error',
-                description: 'Failed to fetch jobs.',
-                status: 'error',
-                duration: 3000,
-                isClosable: true,
-            });
-        }
-    };
+    }, [navigate, toast]);
 
     const handleDelete = async (job) => {
         if (job) {
             try {
-                await axios.delete(`http://localhost:8080/api/recruiter/deleteJob/${job._id}`);
+                await deleteJob(job._id); // Use the API function to delete the job
                 
                 // Update UI directly by filtering out the deleted job
                 setJobs(jobs.filter((j) => j._id !== job._id));
@@ -74,7 +62,6 @@ const JobsDashboard = () => {
                     isClosable: true,
                 });
             } catch (error) {
-                console.error('Error deleting job:', error);
                 toast({
                     title: 'Error',
                     description: 'Failed to delete job.',

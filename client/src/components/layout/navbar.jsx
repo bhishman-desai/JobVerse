@@ -6,7 +6,7 @@ import { HamburgerIcon, ChevronDownIcon } from '@chakra-ui/icons';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { FaBell, FaUser } from 'react-icons/fa';
 import logo from '../../assets/Jobverse.jpeg';
-import { useNotificationStore } from '../../store/store';
+import { useSocketStore } from '../../store/store';
 
 const Navbar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -21,8 +21,8 @@ const Navbar = () => {
     { name: "Contact us", path: "/contact-us" }
   ];
 
-  const newNotification = useNotificationStore((state) => state.newNotification);
-  const clearNewNotification = useNotificationStore((state) => state.clearNewNotification);
+  const newNotification = useSocketStore((state) => state.newNotification);
+  const clearNewNotification = useSocketStore((state) => state.clearNewNotification);
 
   useEffect(() => {
     const token = localStorage.getItem('token');

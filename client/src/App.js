@@ -4,7 +4,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Box } from '@chakra-ui/react';
 import withLayout from './components/layout/withLayout';
 import './App.css';
-import { useNotificationStore } from './store/store';
+import { useSocketStore } from './store/store';
+import { getUsername } from './pages/auth/helper/api';
 
 
 const Home = lazy(() => import('./pages/Home'));
@@ -31,14 +32,18 @@ const Notifications = lazy(() => import('./pages/notifications'));
 const PageNotFoundPage = lazy(() => import('./components/pageNotFound'));
 
 function App() {
-  const initializeSocket = useNotificationStore((state) => state.initializeSocket);
+  const initializeSocket = useSocketStore((state) => state.initializeSocket);
 
-    useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      initializeSocket(token);
-    }
-  }, []);
+  useEffect(() => {
+    const loadData = async () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        const user = await getUsername();
+        initializeSocket(token, user.username);
+      }
+    };
+    loadData();
+  }, [initializeSocket]);
 
   return (
     <Box>

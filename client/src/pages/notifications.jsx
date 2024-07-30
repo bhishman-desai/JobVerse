@@ -5,14 +5,13 @@ import {
     Flex
 } from '@chakra-ui/react';
 import NotificationCard from '../components/NotificationCard';
-import { getUsername } from './auth/helper/api';
-import { useNotificationStore } from '../store/store';
+import { useSocketStore } from '../store/store';
 
 const Notifications = () => {
-    const notifications = useNotificationStore((state) => state.notifications);
-    const fetchNotifications = useNotificationStore((state) => state.fetchNotifications);
-    const markNotificationsAsRead = useNotificationStore((state) => state.markNotificationsAsRead);
-    const deleteNotification = useNotificationStore((state) => state.deleteNotification);
+    const notifications = useSocketStore((state) => state.notifications);
+    const fetchNotifications = useSocketStore((state) => state.fetchNotifications);
+    const markNotificationsAsRead = useSocketStore((state) => state.markNotificationsAsRead);
+    const deleteNotification = useSocketStore((state) => state.deleteNotification);
 
     useEffect(() => {
         const loadData = async () => {

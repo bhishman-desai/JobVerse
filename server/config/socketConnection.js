@@ -1,9 +1,14 @@
-import { Server } from 'socket.io';
+import {
+  Server
+} from 'socket.io';
 import jwt from 'jsonwebtoken';
-import Notification from '../model/notification.js'; 
+import Notification from '../model/notification.js';
+import UserInteraction from '../model/UserInteraction.js';
+import Message from '../model/Message.js'
+import UserModel from '../model/User.model.js';
 
 let io;
-const userSocketMap = new Map();
+const notifiedUsers = new Set();
 
 const initializeSocket = (server) => {
   if (io) {
@@ -13,7 +18,7 @@ const initializeSocket = (server) => {
 
   io = new Server(server, {
     cors: {
-      origin: "http://localhost:3000",
+      origin: "*",
       methods: ["GET", "POST"]
     }
   });
@@ -26,8 +31,8 @@ const initializeSocket = (server) => {
     }
 
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET); // Verify the token
-      socket.userId = decoded.userId; // Attach userId to socket instance
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      socket.userId = decoded.userId;
       next();
     } catch (error) {
       next(new Error('Authentication error'));
@@ -38,40 +43,114 @@ const initializeSocket = (server) => {
     console.log('A user connected');
     const userId = socket.userId;
 
-    // Map userId to socketId
-    userSocketMap.set(userId, socket.id);
-
-    // Join a room with userId as the room name
     socket.join(userId);
     console.log(`User ${userId} joined room`);
 
-    socket.on('disconnect', () => {
-      console.log('User disconnected');
-      userSocketMap.delete(userId); // Remove mapping when the user disconnects
+    socket.on('joinChat', async (username) => {
+      socket.join(username);
+
+      const messages = await Message.find({
+        $or: [{
+          senderUsername: username
+        }, {
+          receiverUsername: username
+        }]
+      }).sort({
+        timestamp: 1
+      });
+
+      socket.emit('chatHistory', messages);
+
+      const userInteraction = await UserInteraction.findOne({
+        username
+      });
+      const interactedUsers = userInteraction ? userInteraction.interactedUsers : [];
+      socket.emit('interactedUsers', interactedUsers);
+    });
+
+    socket.on('leaveChat', (userName) => {
+      socket.leave(userName);
+      console.log(`User with username ${userName} left chat ${userName}`);
+      notifiedUsers.forEach((key) => {
+        if (key.endsWith(`_${socket.id}`)) {
+          notifiedUsers.delete(key);
+        }
+      });
+    });
+
+    socket.on('sendMessage', async (message) => {
+      const newMessage = new Message(message);
+      await newMessage.save();
+
+      await UserInteraction.updateOne({
+        username: message.senderUsername
+      }, {
+        $addToSet: {
+          interactedUsers: message.receiverUsername
+        }
+      }, {
+        upsert: true
+      });
+      await UserInteraction.updateOne({
+        username: message.receiverUsername
+      }, {
+        $addToSet: {
+          interactedUsers: message.senderUsername
+        }
+      }, {
+        upsert: true
+      });
+
+      io.to(message.receiverUsername).emit('receiveMessage', message);
+
+      const userKey = `${message.receiverUsername}_${socket.id}`;
+      const receiverRoom = io.sockets.adapter.rooms.get(message.receiverUsername);
+      const isReceiverPresent = receiverRoom && receiverRoom.size > 0;
+      console.log((!notifiedUsers.has(userKey)))
+      if ((!notifiedUsers.has(userKey)) && (!isReceiverPresent)) {
+        sendNotification(
+          message.receiverUsername,
+          message.senderUsername,
+          'New Message',
+          `${message.senderUsername} has sent you a message.`,
+          'chat'
+        );
+        notifiedUsers.add(userKey);
+      }
+
     });
   });
 
   return io;
 };
 
-const sendNotification = async (userId, message) => {
+const sendNotification = async (userName, senderUserName, heading, content, type) => {
+  const receiverUser = await UserModel.findOne({
+    username: userName
+  });
   try {
-    // Get the socketId for the userId
-    const socketId = userSocketMap.get(userId);
-    if (socketId) {
-      // Emit the notification to the user's socketId
-      io.to(socketId).emit('notification', { message, createdAt: new Date() });
-    } else {
-      console.error(`No socket found for user ${userId}`);
-    }
-
-    // Save the notification in the database
-    const newNotification = new Notification({ userId, message });
+    const newNotification = new Notification({
+      userName,
+      senderUserName,
+      heading,
+      content,
+      type,
+    });
     await newNotification.save();
-    console.log(`Notification sent to user ${userId}`);
+    const receiverIdStr = receiverUser && receiverUser._id.toString();
+    io.to(receiverIdStr).emit('notification', {
+      heading,
+      content,
+      type,
+      createdAt: newNotification.createdAt,
+      senderUserName,
+    });
   } catch (error) {
     console.error('Error sending notification:', error);
   }
 };
 
-export { initializeSocket, sendNotification };
+export {
+  initializeSocket,
+  sendNotification
+};

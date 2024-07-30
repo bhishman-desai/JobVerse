@@ -2,7 +2,8 @@ import Notification from '../model/notification.js';
 
 export const getNotifications = async (req, res) => {
   try {
-    const notifications = await Notification.find({ userId: req.user.userId }).sort({ createdAt: -1 });
+    console.log(req.user)
+    const notifications = await Notification.find({ userName: req.user.username }).sort({ createdAt: -1 });
     res.json(notifications);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching notifications', error });
@@ -11,7 +12,7 @@ export const getNotifications = async (req, res) => {
 
 export const markNotificationsAsRead = async (req, res) => {
   try {
-    await Notification.updateMany({ userId: req.user.userId, isRead: false }, { isRead: true });
+    await Notification.updateMany({ userName: req.user.username, isRead: false }, { isRead: true });
     res.status(200).send('Notifications marked as read');
   } catch (error) {
     res.status(500).json({ message: 'Error marking notifications as read', error });
@@ -21,7 +22,7 @@ export const markNotificationsAsRead = async (req, res) => {
 export const createNotification = async (req, res) => {
   const { message } = req.body;
   try {
-    const newNotification = new Notification({ userId: req.user.userId, message });
+    const newNotification = new Notification({ userName: req.user.username, message });
     await newNotification.save();
     res.status(200).send('Notification created');
   } catch (error) {

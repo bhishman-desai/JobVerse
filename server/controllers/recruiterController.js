@@ -4,7 +4,7 @@ import Job from "../model/Job.js";
 import Applicant from "../model/Applicants.js";
 import User from "../model/User.model.js";
 import mongoose from 'mongoose';
-import { sendNotification } from '../config/socketConnection.js'; // Ensure correct path
+import { sendNotification } from '../config/socketConnection.js';
 
 // export async function getAllJobs(req, res) {
 //     try {
@@ -89,8 +89,6 @@ export async function updateApplicantStatus(req, res) {
 
 
 
-
-
 export async function createJob(req, res) {
     const {
         positionName,
@@ -135,7 +133,8 @@ export async function createJob(req, res) {
         });
 
         await newJob.save();
-        sendNotification(recruiterId, 'Your job has been successfully created.');
+        console.log(recruiterId)
+        sendNotification(recruiterId, senderUsername, 'Job Created', 'Your job has been successfully created.', 'application status');
         res.status(201).json(newJob);
     } catch (err) {
         res.status(400).json({ message: err.message });
