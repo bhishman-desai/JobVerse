@@ -42,7 +42,7 @@ const Notifications = () => {
                             id={notification._id}
                             heading={notification.heading}
                             type={notification.type}
-                            content={notification.message}
+                            content={notification.content}
                             createdAt={notification.createdAt}
                             onDelete={() => handleDelete(notification._id)}
                         />
