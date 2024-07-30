@@ -165,7 +165,7 @@ const JobDetail = () => {
     }
 
     return (
-        <Box p={6} maxW="container.md" mx="auto">
+        <Box p={6} maxW="container.xl" mx="auto">
             <Tabs variant="enclosed" index={tabIndex} onChange={(index) => setTabIndex(index)}>
                 <TabList>
                     <Tab>Job Details</Tab>
