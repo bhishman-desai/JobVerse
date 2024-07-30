@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 import UserInteraction from '../model/UserInteraction.js';
 import Message from '../model/Message.js'
 import UserModel from '../model/User.model.js';
-import Notification from '../model/notification.js';
+import Notification from '../model/Notification.js';
 
 let io;
 const notifiedUsers = new Set();
