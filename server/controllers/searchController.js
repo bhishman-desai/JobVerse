@@ -7,12 +7,14 @@ export async function searchJobs(req, res) {
     const { jobTitle, location, datePosted, payRange } = req.query;
     let query = {};
 
+    
+
     // Add search criteria to the query
     if (jobTitle) {
       query.positionName = { $regex: jobTitle, $options: 'i' }; // Case-insensitive search
     }
     if (location) {
-      query.location = { $regex: location, $options: 'i' }; // Case-insensitive search
+      query.location = location; // Match exact province abbreviation
     }
     if (datePosted) {
       const date = new Date();
@@ -31,6 +33,8 @@ export async function searchJobs(req, res) {
       const [min, max] = payRange.split('-').map(Number);
       query.salary = { $gte: min, $lte: max || Infinity };
     }
+
+
 
     // Fetch jobs and send response
     const jobs = await Job.find(query);
