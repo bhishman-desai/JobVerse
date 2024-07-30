@@ -7,6 +7,7 @@ import connect from './config/dBConnection.js';
 import {initializeSocket} from './config/socketConnection.js';
 import apiRoutes from './router/apiRoutes.js';
 
+
 const app = express();
 const server = http.createServer(app);
 app.use(express.json());
