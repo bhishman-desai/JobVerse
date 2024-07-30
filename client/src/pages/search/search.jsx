@@ -1,12 +1,11 @@
 /* Author: Sivaprakash Chittu Hariharan */
 import React, { useState, useEffect } from 'react';
-import { ChakraProvider, Box, Input, Select, Button, Stack, HStack, VStack, Center, Text, Collapse } from '@chakra-ui/react';
+import { ChakraProvider, Box, Input, Select, Button, Stack, HStack, VStack, Center, Text, Collapse, useBreakpointValue } from '@chakra-ui/react';
 import JobListing from './helper/jobListings';
-import { fetchJobs } from './helper/api'; 
+import { fetchJobs } from './helper/api';
+import { useJobSearchStore } from '../../store/store.js';
 
 const JobSearch = () => {
-  // State hooks for search parameters and results
-  const [jobTitle, setJobTitle] = useState('');
   const [location, setLocation] = useState('');
   const [datePosted, setDatePosted] = useState('');
   const [payRange, setPayRange] = useState('');
@@ -14,63 +13,60 @@ const JobSearch = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  // Toggles the visibility of the filter options
+  const jobTitle = useJobSearchStore((state) => state.jobTitle);
+  const setJobTitle = useJobSearchStore((state) => state.setJobTitle);
+
   const toggleFilters = () => setShowFilters(!showFilters);
 
-  // Fetches job listings based on search parameters
   const handleSearch = async () => {
     try {
       const jobsData = await fetchJobs({ jobTitle, location, datePosted, payRange });
       setJobs(jobsData);
-      // Sets an error message if no jobs are found
       if (jobsData.length === 0) {
         setErrorMessage('No job postings found for the given criteria.');
       } else {
         setErrorMessage('');
       }
     } catch (error) {
-      // Handles errors and sets the error message
       setErrorMessage(error.message);
     }
   };
 
-  // Fetches all jobs on initial load
   useEffect(() => {
     handleSearch();
   }, []);
 
+  const stackDirection = useBreakpointValue({ base: 'column', md: 'row' });
+  const inputWidth = useBreakpointValue({ base: '100%', md: '200px' });
+
   return (
     <ChakraProvider>
-      <Box p={5}>
-        <Center mb={5}>
-          <Stack direction="column" spacing={4} align="center">
-            <HStack spacing={4}>
-              {/* Input fields for job title and location */}
-              <Input 
-                placeholder="Job Title" 
-                width="200px" 
+      <Box p={[2, 3, 5]}>
+        <Center mb={[3, 4, 5]}>
+          <VStack spacing={[3, 4]} align="center" width="100%">
+            <Stack direction={stackDirection} spacing={[2, 3, 4]} width="100%" justifyContent="center">
+              <Input
+                placeholder="Job Title"
+                width={inputWidth}
                 value={jobTitle}
                 onChange={(e) => setJobTitle(e.target.value)}
               />
-              <Input 
-                placeholder="Location" 
-                width="200px" 
+              <Input
+                placeholder="Location"
+                width={inputWidth}
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
               />
-              {/* Button to trigger search */}
-              <Button colorScheme="teal" height="40px" width="100px" onClick={handleSearch}>Search</Button>
-              {/* Button to toggle filter visibility */}
+              <Button colorScheme="teal" height="40px" width={["80px", "100px"]} onClick={handleSearch}>Search</Button>
               <Button variant="link" onClick={toggleFilters}>
                 {showFilters ? 'Hide Filters' : 'Show Filters'}
               </Button>
-            </HStack>
+            </Stack>
             <Collapse in={showFilters}>
-              <HStack spacing={4} mt={4} justifyContent="center">
-                {/* Select dropdown for date posted filter */}
-                <Select 
-                  placeholder="Date Posted" 
-                  width="200px" 
+              <HStack spacing={[2, 3, 4]} mt={[2, 3, 4]} justifyContent="center" direction={stackDirection} width="100%">
+                <Select
+                  placeholder="Date Posted"
+                  width={inputWidth}
                   height="40px"
                   value={datePosted}
                   onChange={(e) => setDatePosted(e.target.value)}
@@ -79,10 +75,9 @@ const JobSearch = () => {
                   <option value="this_week">This Week</option>
                   <option value="this_month">This Month</option>
                 </Select>
-                {/* Select dropdown for pay range filter */}
-                <Select 
-                  placeholder="Pay Range" 
-                  width="200px" 
+                <Select
+                  placeholder="Pay Range"
+                  width={inputWidth}
                   height="40px"
                   value={payRange}
                   onChange={(e) => setPayRange(e.target.value)}
@@ -93,17 +88,15 @@ const JobSearch = () => {
                 </Select>
               </HStack>
             </Collapse>
-          </Stack>
+          </VStack>
         </Center>
         <Center>
-          <VStack spacing={4} width="80%">
-            {/* Display error message if any */}
+          <VStack spacing={[3, 4]} width="100%">
             {errorMessage ? (
               <Text color="red.500">{errorMessage}</Text>
             ) : (
-              // Map over jobs and render JobListing components
               jobs.map(job => (
-                <JobListing 
+                <JobListing
                   key={job._id}
                   job={job}
                 />
