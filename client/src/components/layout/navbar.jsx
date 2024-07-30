@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import {
   Box, Flex, Link, IconButton, Drawer, DrawerBody, DrawerHeader, DrawerOverlay, DrawerContent, DrawerCloseButton, useDisclosure, Image, Button, Icon, Menu, MenuButton, MenuList, MenuItem
 } from '@chakra-ui/react';
-import { HamburgerIcon, ChevronDownIcon } from '@chakra-ui/icons';
+import { HamburgerIcon } from '@chakra-ui/icons';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { FaBell, FaUser, FaComments } from 'react-icons/fa';
+import { FaBell, FaUser } from 'react-icons/fa';
 import logo from '../../assets/Jobverse.jpeg';
 import { useSocketStore } from '../../store/store';
 
@@ -55,7 +55,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    localStorage.removeItem('userRole');
+    localStorage.removeItem('role');
     setIsLoggedIn(false);
     setUserRole(null);
     navigate('/login');
@@ -63,7 +63,7 @@ const Navbar = () => {
 
   const renderLinks = () => {
     if (isLoggedIn) {
-      if(userRole === 'Recruiter'){
+      if (userRole === 'Recruiter') {
 
         return links.filter(link => link.role === 'recruiter').map(link => (
           <Link

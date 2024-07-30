@@ -2,16 +2,16 @@ import React from 'react';
 import { Box, Flex, Text, Input, Button, Stack } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { useJobSearchStore } from '../store/store';
-
+ 
 const Home = () => {
   const jobTitle = useJobSearchStore((state) => state.jobTitle);
   const setJobTitle = useJobSearchStore((state) => state.setJobTitle);
   const navigate = useNavigate();
-
+ 
   const handleSearch = () => {
     navigate('/search');
   };
-
+ 
   return (
     <Box
       height="100vh"
@@ -41,11 +41,11 @@ const Home = () => {
           <Text fontSize={{ base: "lg", sm: "xl", md: "2xl" }} mb={8}>
             Start your job search now!
           </Text>
-          
+         
           <Stack spacing={4} width="100%" maxWidth="600px" mb={8}>
-            <Input 
-              placeholder="Position Name" 
-              backgroundColor="white" 
+            <Input
+              placeholder="Position Name"
+              backgroundColor="white"
               color="black"
               _focus={{ backgroundColor: 'white', boxShadow: 'outline' }}
               value={jobTitle}
@@ -54,7 +54,7 @@ const Home = () => {
             <Button onClick={handleSearch} colorScheme="green" size="lg">Search</Button>
           </Stack>
         </Box>
-
+ 
         <Box flex="1" marginLeft={{ lg: "4" }}>
           <Text fontSize={{ base: "2xl", sm: "3xl", md: "4xl" }} mb={4}>
             Are you an <Text as="span" color="orange">employer</Text> looking for the perfect candidate?
@@ -68,5 +68,5 @@ const Home = () => {
     </Box>
   );
 };
-
+ 
 export default Home;

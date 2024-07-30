@@ -28,7 +28,6 @@ const JobSearch = () => {
   const [jobs, setJobs] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [currentUserId, setCurrentUserId] = useState(null); // State to store current user's ID
   const [currentPage, setCurrentPage] = useState(1);
   const jobsPerPage = 5;
   // Accessing jobTitle from the global store and setting it
