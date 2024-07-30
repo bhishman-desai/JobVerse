@@ -20,7 +20,8 @@ const Navbar = () => {
     { name: "FAQ", path: "/faq" },
     { name: "Contact us", path: "/contact-us" },
     { name: "Dashboard", path: "/recruiter/dashboard", role: "recruiter" },
-    { name: "Create Job", path: "/recruiter/create-job", role: "recruiter" }
+    { name: "Create Job", path: "/recruiter/create-job", role: "recruiter" },
+    { name: "Applications", path: "/job-seeker/applications", role: "student" }
   ];
 
   const newNotification = useSocketStore((state) => state.newNotification);
@@ -61,22 +62,41 @@ const Navbar = () => {
   };
 
   const renderLinks = () => {
-    if (isLoggedIn && userRole === 'Recruiter') {
-      return links.filter(link => link.role === 'recruiter').map(link => (
-        <Link
-          as={NavLink}
-          to={link.path}
-          key={link.name}
-          px={4}
-          py={2}
-          className="text-black font-semibold"
-          borderBottom={{ base: 'none', md: selected === link.name ? "2px solid black" : "none" }}
-          onClick={() => handleSelect(link.name)}
-          _hover={{ backgroundColor: 'gray.300' }}
-        >
-          {link.name}
-        </Link>
-      ));
+    if (isLoggedIn) {
+      if(userRole === 'Recruiter'){
+
+        return links.filter(link => link.role === 'recruiter').map(link => (
+          <Link
+            as={NavLink}
+            to={link.path}
+            key={link.name}
+            px={4}
+            py={2}
+            className="text-black font-semibold"
+            borderBottom={{ base: 'none', md: selected === link.name ? "2px solid black" : "none" }}
+            onClick={() => handleSelect(link.name)}
+            _hover={{ backgroundColor: 'gray.300' }}
+          >
+            {link.name}
+          </Link>
+        ));
+      } else {
+        return links.filter(link => link.role === 'student').map(link => (
+          <Link
+            as={NavLink}
+            to={link.path}
+            key={link.name}
+            px={4}
+            py={2}
+            className="text-black font-semibold"
+            borderBottom={{ base: 'none', md: selected === link.name ? "2px solid black" : "none" }}
+            onClick={() => handleSelect(link.name)}
+            _hover={{ backgroundColor: 'gray.300' }}
+          >
+            {link.name}
+          </Link>
+        ));
+      }
     }
     return links.filter(link => !link.role).map(link => (
       <Link
