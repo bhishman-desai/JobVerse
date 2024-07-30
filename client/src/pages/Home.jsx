@@ -1,8 +1,8 @@
 /* Author: Ashish Kumar Guntipalli */
 import React from 'react';
 import { Box, Flex, Text, Input, Button, Stack } from '@chakra-ui/react';
-import {  useNavigate } from 'react-router-dom';
-import {useJobSearchStore  }  from '../store/store';
+import { useNavigate } from 'react-router-dom';
+import { useJobSearchStore } from '../store/store';
 
 const Home = () => {
   const jobTitle = useJobSearchStore((state) => state.jobTitle);
@@ -26,8 +26,8 @@ const Home = () => {
       px={4}
     >
       <Flex
-        width={{ base: "100%", sm: "90%", md: "80%", lg: "70%" }}
-        flexDirection={{ base: "column", lg: "row" }}
+        width={{ base: '100%', sm: '90%', md: '80%', lg: '70%' }}
+        flexDirection={{ base: 'column', lg: 'row' }}
         alignItems="center"
         textAlign="center"
         backgroundColor="rgba(0, 0, 0, 0.4)"
@@ -68,6 +68,6 @@ const Home = () => {
       </Flex>
     </Box>
   );
-}
+};
 
 export default Home;
