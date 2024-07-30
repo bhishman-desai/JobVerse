@@ -21,7 +21,7 @@ function JobCreation() {
     const [salary, setSalary] = useState('');
     const [numPositions, setNumPositions] = useState('');
     const [jobDescription, setJobDescription] = useState('');
-    const [resumeRequired, setResumeRequired] = useState('false');
+    const [resumeRequired, setResumeRequired] = useState('true');
     const [coverLetterRequired, setCoverLetterRequired] = useState('false');
     const [companyName, setCompanyName] = useState('');
     const [location, setLocation] = useState('');
@@ -189,19 +189,6 @@ function JobCreation() {
                                     {province}
                                 </option>
                             ))}
-                        </Select>
-                    </FormControl>
-
-                    <FormControl isRequired>
-                        <FormLabel>Resume Required?</FormLabel>
-                        <Select
-                            id='resume'
-                            name='resume'
-                            value={resumeRequired}
-                            onChange={(e) => setResumeRequired(e.target.value)}
-                        >
-                            <option value='true'>Yes</option>
-                            <option value='false'>No</option>
                         </Select>
                     </FormControl>
 
