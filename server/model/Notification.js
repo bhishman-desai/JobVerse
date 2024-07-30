@@ -19,7 +19,7 @@ const NotificationSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['chat', 'application status'],
+    enum: ['chat', 'statusChange' , 'application'],
     required: true,
   },
   isRead: {

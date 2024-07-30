@@ -5,6 +5,8 @@ import Applicant from "../model/Applicants.js";
 import { v2 as cloudinary } from "cloudinary";
 import multer from "multer";
 import dotenv from "dotenv";
+import UserModel from "../model/User.model.js";
+import { sendNotification } from "../config/socketConnection.js";
 
 dotenv.config();
 
@@ -86,6 +88,17 @@ export const applyForJob = async (req, res) => {
     });
 
     await newApplicant.save();
+    const jobInfo = await Job.findOne({
+      _id: jobId
+    });
+    const userInfo = await UserModel.findOne({
+      _id: jobInfo.recruiterId
+    });
+    sendNotification(userInfo.username,
+      jobInfo.positionName,
+      'New Applicant',
+      `${name} has applied for the ${jobInfo.positionName} position. Please review their application. `,
+      'application')
     res.status(201).json(newApplicant);
   } catch (err) {
     res.status(400).json({ message: err.message });
