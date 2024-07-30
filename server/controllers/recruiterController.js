@@ -37,13 +37,14 @@ export async function addApplicant(req, res) {
 }
 
 export async function getApplicantsByJobId(req, res) {
-    const { id } = req.params;
-    if (!id) {
+    const { id: jobId } = req.params;
+    console.log(jobId);
+    if (!jobId) {
         return res.status(400).json({ error: 'Job ID is required' });
     }
 
     try {
-        const applicants = await Applicant.find({ id });
+        const applicants = await Applicant.find({ jobId });
 
         if (applicants.length === 0) {
             return res.status(404).json({ message: 'No applicants found for this job' });
@@ -54,7 +55,8 @@ export async function getApplicantsByJobId(req, res) {
         console.error('Error fetching applicants:', error);
         return res.status(500).json({ error: 'An error occurred while fetching applicants' });
     }
-};
+}
+
 
 
 export async function updateApplicantStatus(req, res) {
