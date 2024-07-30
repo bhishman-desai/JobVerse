@@ -1,4 +1,3 @@
-/* Author: Ashish Kumar Guntipalli */
 import React from 'react';
 import { Box, Flex, Text, Input, Button, Stack } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
@@ -45,10 +44,10 @@ const Home = () => {
           
           <Stack spacing={4} width="100%" maxWidth="600px" mb={8}>
             <Input 
-              placeholder="Job title, Keywords" 
-              variant="filled" 
+              placeholder="Position Name" 
               backgroundColor="white" 
               color="black"
+              _focus={{ backgroundColor: 'white', boxShadow: 'outline' }}
               value={jobTitle}
               onChange={(e) => setJobTitle(e.target.value)}
             />
@@ -63,7 +62,7 @@ const Home = () => {
           <Text fontSize={{ base: "lg", sm: "xl", md: "2xl" }} mb={8}>
             Post your job now!
           </Text>
-          <Button as="a" href="/post-job" colorScheme="orange" size="lg">I want to recruit now!</Button>
+          <Button as="a" href="/recruiter/dashboard" colorScheme="orange" size="lg">I want to recruit now!</Button>
         </Box>
       </Flex>
     </Box>
