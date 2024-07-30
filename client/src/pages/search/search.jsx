@@ -1,21 +1,36 @@
-/* Author: Sivaprakash Chittu Hariharan */
-import React, { useState, useEffect } from 'react';
-import { ChakraProvider, Box, Input, Select, Button, Stack, HStack, VStack, Center, Text, Collapse, useBreakpointValue } from '@chakra-ui/react';
-import JobListing from './helper/jobListings';
-import { fetchJobs } from './helper/api';
-import { useJobSearchStore } from '../../store/store.js';
+import React, { useState, useEffect } from "react";
+import {
+  ChakraProvider,
+  Box,
+  Input,
+  Select,
+  Button,
+  Stack,
+  HStack,
+  VStack,
+  Center,
+  Text,
+  Collapse,
+  useBreakpointValue,
+} from "@chakra-ui/react";
+import JobListing from "./helper/jobListings";
+import { fetchJobs } from "./helper/api";
+import { useJobSearchStore } from "../../store/store.js";
+import useFetch from "../../hooks/fetch.hook";
 
 const JobSearch = () => {
   // State hooks for managing form inputs and job listings
-  const [location, setLocation] = useState('');
-  const [datePosted, setDatePosted] = useState('');
-  const [payRange, setPayRange] = useState('');
+  
+
+  const [location, setLocation] = useState("");
+  const [datePosted, setDatePosted] = useState("");
+  const [payRange, setPayRange] = useState("");
   const [jobs, setJobs] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
+  const [currentUserId, setCurrentUserId] = useState(null); // State to store current user's ID
   const [currentPage, setCurrentPage] = useState(1);
   const jobsPerPage = 5;
-
   // Accessing jobTitle from the global store and setting it
   const jobTitle = useJobSearchStore((state) => state.jobTitle);
   const setJobTitle = useJobSearchStore((state) => state.setJobTitle);
@@ -26,8 +41,6 @@ const JobSearch = () => {
   // Function to handle job search and fetch job listings from API
   const handleSearch = async () => {
     try {
-      // Log the search criteria for debugging
-      console.log('Searching with:', { jobTitle, location, datePosted, payRange });
 
       // Fetch jobs based on the search criteria
       const jobsData = await fetchJobs({ jobTitle, location, datePosted, payRange });
@@ -38,7 +51,7 @@ const JobSearch = () => {
       if (jobsData.length === 0) {
         setErrorMessage('No job postings found for the given criteria.');
       } else {
-        setErrorMessage('');
+        setErrorMessage("");
       }
     } catch (error) {
       // Handle errors from the API request
@@ -63,6 +76,9 @@ const JobSearch = () => {
   // Responsive design: adjust stack direction and input width based on screen size
   const stackDirection = useBreakpointValue({ base: 'column', md: 'row' });
   const inputWidth = useBreakpointValue({ base: '100%', md: '200px' });
+  const [{ apiData, isLoading, serverError }] = useFetch("");
+  if (isLoading) return <p>Loading...</p>;
+  if (serverError) return <p>Error fetching user data.</p>;
 
   return (
     <ChakraProvider>
@@ -102,7 +118,7 @@ const JobSearch = () => {
               <Button colorScheme="teal" height="40px" width={["80px", "100px"]} onClick={handleSearch}>Search</Button>
               {/* Button to toggle filter options visibility */}
               <Button variant="link" onClick={toggleFilters}>
-                {showFilters ? 'Hide Filters' : 'Show Filters'}
+                {showFilters ? "Hide Filters" : "Show Filters"}
               </Button>
             </Stack>
             <Collapse in={showFilters}>

@@ -34,8 +34,7 @@ export async function searchJobs(req, res) {
       query.salary = { $gte: min, $lte: max || Infinity };
     }
 
-    // Log the query object
-    console.log('Query object:', query);
+
 
     // Fetch jobs and send response
     const jobs = await Job.find(query);
