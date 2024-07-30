@@ -109,3 +109,17 @@ export const updateUserProfile = async (profileData) => {
     throw new Error("Failed to update profile.");
   }
 };
+
+/* Fetch user applications */
+export const fetchApplicationsByEmail = async (email) => {
+  const token = localStorage.getItem("token");
+  try {
+    const response = await axios.get(`/api/jobSeeker/applications/${email}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching applications by email:", error);
+    throw new Error("Failed to fetch applications by email.");
+  }
+};
