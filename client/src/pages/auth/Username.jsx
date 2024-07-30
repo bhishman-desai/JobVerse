@@ -24,6 +24,7 @@ export default function Username() {
     onSubmit: async (values) => {
       /* Handle different roles here if needed */
       setUsername(values.username);
+      localStorage.setItem('role', values.role);
       navigate("/password");
     },
   });

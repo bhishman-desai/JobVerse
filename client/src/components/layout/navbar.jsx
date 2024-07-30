@@ -12,13 +12,16 @@ const Navbar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selected, setSelected] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState(null); // State to manage user role
   const location = useLocation();
   const navigate = useNavigate();
   const links = [
     { name: "Home", path: "/" },
     { name: "FAQ", path: "/faq" },
     { name: "About", path: "/about" },
-    { name: "Contact us", path: "/contact-us" }
+    { name: "Contact us", path: "/contact-us" },
+    { name: "Dashboard", path: "/recruiter/dashboard", role: "recruiter" },
+    { name: "Create Job", path: "/recruiter/create-job", role: "recruiter" }
   ];
 
   const newNotification = useSocketStore((state) => state.newNotification);
@@ -26,7 +29,13 @@ const Navbar = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    setIsLoggedIn(!!token); // Set isLoggedIn based on token presence
+    setIsLoggedIn(!!token);
+
+    if (token) {
+      // Fetch user role from API or localStorage
+      const role = localStorage.getItem('role'); // Replace with API call if needed
+      setUserRole(role);
+    }
   }, []);
 
   const handleSelect = (link) => {
@@ -46,8 +55,45 @@ const Navbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('userRole');
     setIsLoggedIn(false);
+    setUserRole(null);
     navigate('/login');
+  };
+
+  const renderLinks = () => {
+    if (isLoggedIn && userRole === 'Recruiter') {
+      return links.filter(link => link.role === 'recruiter').map(link => (
+        <Link
+          as={NavLink}
+          to={link.path}
+          key={link.name}
+          px={4}
+          py={2}
+          className="text-black font-semibold"
+          borderBottom={{ base: 'none', md: selected === link.name ? "2px solid black" : "none" }}
+          onClick={() => handleSelect(link.name)}
+          _hover={{ backgroundColor: 'gray.300' }}
+        >
+          {link.name}
+        </Link>
+      ));
+    }
+    return links.filter(link => !link.role).map(link => (
+      <Link
+        as={NavLink}
+        to={link.path}
+        key={link.name}
+        px={4}
+        py={2}
+        className="text-black font-semibold"
+        borderBottom={selected === link.name ? "2px solid black" : "none"}
+        onClick={() => handleSelect(link.name)}
+        _hover={{ backgroundColor: 'gray.300' }}
+      >
+        {link.name}
+      </Link>
+    ));
   };
 
   return (
@@ -66,21 +112,7 @@ const Navbar = () => {
           </Link>
         </Box>
         <Flex ml={4} display={{ base: 'none', md: 'flex' }}>
-          {links.map((link) => (
-            <Link
-              as={NavLink}
-              to={link.path}
-              key={link.name}
-              px={4}
-              py={2}
-              className="text-black font-semibold"
-              borderBottom={selected === link.name ? "2px solid black" : "none"}
-              onClick={() => handleSelect(link.name)}
-              _hover={{ backgroundColor: 'gray.300' }}
-            >
-              {link.name}
-            </Link>
-          ))}
+          {renderLinks()}
         </Flex>
         <Flex ml="auto">
           {isLoggedIn ? (
@@ -138,65 +170,50 @@ const Navbar = () => {
             <DrawerCloseButton />
             <DrawerHeader>Menu</DrawerHeader>
             <DrawerBody>
-              {links.map((link) => (
-                <Link
-                  as={NavLink}
-                  to={link.path}
-                  key={link.name}
-                  display="block"
-                  px={4}
-                  py={2}
-                  className="text-black font-semibold rounded-lg"
-                  onClick={() => {
-                    handleSelect(link.name);
-                    onClose();
-                  }}
-                  _hover={{ backgroundColor: 'gray.300' }}
-                >
-                  {link.name}
-                </Link>
-              ))}
-              {isLoggedIn ? (
-                <>
+              <Flex direction="column">
+                {renderLinks()}
+                {isLoggedIn ? (
+                  <>
+                    <Link
+                      as={NavLink}
+                      to="/profile"
+                      display="block"
+                      px={4}
+                      py={2}
+                      className="text-black font-semibold"
+                      _hover={{ backgroundColor: 'gray.300' }}
+                    >
+                      Update Profile
+                    </Link>
+                    <Link
+                      display="block"
+                      px={4}
+                      py={2}
+                      className="text-black font-semibold"
+                      onClick={() => {
+                        handleLogout();
+                        onClose();
+                      }}
+                      _hover={{ backgroundColor: 'gray.300' }}
+                    >
+                      Logout
+                    </Link>
+                  </>
+                ) : (
                   <Link
                     as={NavLink}
-                    to="/profile"
+                    to="/login"
                     display="block"
                     px={4}
                     py={2}
                     className="text-black font-semibold rounded-lg"
+                    onClick={onClose}
                     _hover={{ backgroundColor: 'gray.300' }}
                   >
-                    Update Profile
+                    Login
                   </Link>
-                  <Link
-                    display="block"
-                    px={4}
-                    py={2}
-                    className="text-black font-semibold rounded-lg"
-                    onClick={() => {
-                      handleLogout();
-                      onClose();
-                    }}
-                    _hover={{ backgroundColor: 'gray.300' }}
-                  >
-                    Logout
-                  </Link>
-                </>
-              ) : (
-                <Link
-                  as={NavLink}
-                  to="/login"
-                  display="block"
-                  px={4}
-                  py={2}
-                  className="text-black font-semibold rounded-lg"
-                  onClick={onClose}
-                  _hover={{ backgroundColor: 'gray.300' }}
-                >
-                  Login
-                </Link>
-              )}
+                )}
+              </Flex>
             </DrawerBody>
           </DrawerContent>
         </DrawerOverlay>

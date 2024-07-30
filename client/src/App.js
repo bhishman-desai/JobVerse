@@ -31,6 +31,10 @@ const JobListings = lazy(() => import("./pages/jobSeeker/JobListings"));
 const JobApplication = lazy(() => import("./pages/jobSeeker/JobApplication"));
 const JobDetails = lazy(() => import("./pages/jobSeeker/JobDetails"));
 
+/* Notifications Pages */
+
+const Notifications = lazy(() => import('./pages/notifications'));
+
 /* Page Not Found */
 const PageNotFoundPage = lazy(() => import('./components/pageNotFound'));
 

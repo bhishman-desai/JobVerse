@@ -6,12 +6,12 @@ import { Flex, Spinner } from '@chakra-ui/react';
 
 const Layout = ({ children }) => {
     const location = useLocation();
-    const showLayout = ['/', '/about', '/faq', '/contact-us', '/recruiter/dashboard','/notifications'];
+    const navNotRequired = ['/login', '/password', '/register', '/recovery','/reset'];
     const currentPath = location.pathname;
 
     return (
         <div className="min-h-screen flex flex-col">
-            {showLayout.includes(currentPath) && <Navbar />}
+            {!navNotRequired.includes(currentPath) && <Navbar />}
             <main className="flex-grow">
                 <Suspense fallback={
                     <Flex align="center" justify="center" w="100" h="100">

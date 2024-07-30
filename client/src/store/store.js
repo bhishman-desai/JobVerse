@@ -22,6 +22,11 @@ export const useAuthStore = create((set) => ({
     })),
 }));
 
+export const useJobSearchStore = create((set) => ({
+  jobTitle: "",
+  setJobTitle: (title) => set({ jobTitle: title }),
+}));
+
 export const useSocketStore = create((set) => ({
   notifications: [],
   newNotification: false,

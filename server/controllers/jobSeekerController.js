@@ -56,8 +56,6 @@ export async function getAllJobs(req, res) {
 export const applyForJob = async (req, res) => {
   const { name, email, jobId } = req.body;
   const resumeFile = req.files?.resume;
-  console.log("req.files", req.files);
-  console.log("req.files?.resume", resumeFile[0]);
   const coverLetterFile = req.files?.coverLetter;
 
   if (!name || !email || !jobId) {
