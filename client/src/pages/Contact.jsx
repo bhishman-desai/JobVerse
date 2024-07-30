@@ -7,8 +7,6 @@ import {
   Text,
   Button,
   VStack,
-  Wrap,
-  WrapItem,
   FormControl,
   FormLabel,
   Input,
@@ -85,97 +83,95 @@ const Contact = () => {
   };
 
   return (
-    <Container maxW="full" mt={0} centerContent overflow="hidden">
-      <Flex>
-        <Wrap spacing={{ base: 20, sm: 3, md: 5, lg: 20 }}>
-          <WrapItem>
-            <Box
-              bg="white"
-              borderRadius="lg"
-              boxShadow="lg"
-              border="1px solid #E0E1E7"
-              m={{ sm: 2, md: 4, lg: 6 }}
-              p={{ sm: 2, md: 4, lg: 6 }}
-              width="500px"
-              maxW="800px"
+    <Container maxW="container.lg" py={8}>
+      <Flex
+        direction="column"
+        align="center"
+        justify="center"
+        px={{ base: 4, md: 8 }}
+      >
+        <Box
+          bg="white"
+          borderRadius="lg"
+          boxShadow="lg"
+          border="1px solid #E0E1E7"
+          p={{ base: 4, md: 6 }}
+          width={{ base: "full", md: "500px" }}
+          maxW="800px"
+        >
+          <VStack spacing={5} align="start">
+            <Heading as="h1" size="lg" textAlign="center">
+              Contact Us!
+            </Heading>
+            <Text color="black" textAlign="center">
+              Fill up the form below to contact us
+            </Text>
+            <FormControl id="name">
+              <FormLabel>Your Name</FormLabel>
+              <InputGroup borderColor="#E0E1E7">
+                <InputLeftElement pointerEvents="none">
+                  <BsPerson color="gray.800" />
+                </InputLeftElement>
+                <Input
+                  type="text"
+                  placeholder="Name"
+                  size="md"
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
+                />
+              </InputGroup>
+              {errors.name && <Text color="red">{errors.name}</Text>}
+            </FormControl>
+            <FormControl id="email">
+              <FormLabel>Your Email</FormLabel>
+              <InputGroup borderColor="#E0E1E7">
+                <InputLeftElement pointerEvents="none">
+                  <MdOutlineEmail color="gray.800" />
+                </InputLeftElement>
+                <Input
+                  type="text"
+                  placeholder="Email"
+                  size="md"
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      email: e.target.value,
+                    })
+                  }
+                />
+              </InputGroup>
+              {errors.email && <Text color="red">{errors.email}</Text>}
+            </FormControl>
+            <FormControl id="message">
+              <FormLabel>Message</FormLabel>
+              <Textarea
+                borderColor="gray.300"
+                placeholder="Enter your message here!"
+                value={formData.message}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    message: e.target.value,
+                  })
+                }
+              />
+              {errors.message && <Text color="red">{errors.message}</Text>}
+            </FormControl>
+            <Button
+              variant="solid"
+              bg="#0D74FF"
+              color="white"
+              _hover={{ bg: "#0056b3" }}
+              onClick={handleSubmit}
+              alignSelf="center"
             >
-              <VStack spacing={5}>
-                <Heading>Contact Us!</Heading>
-                <Text mt={{ sm: 3, md: 3, lg: 5 }} color="black">
-                  Fill up the form below to contact
-                </Text>
-                <FormControl id="name">
-                  <FormLabel>Your Name</FormLabel>
-                  <InputGroup borderColor="#E0E1E7">
-                    <InputLeftElement pointerEvents="none">
-                      <BsPerson color="gray.800" />
-                    </InputLeftElement>
-                    <Input
-                      type="text"
-                      placeholder="Name"
-                      size="md"
-                      value={formData.name}
-                      onChange={(e) =>
-                        setFormData({ ...formData, name: e.target.value })
-                      }
-                    />
-                  </InputGroup>
-                  {errors.name && <Text color="red">{errors.name}</Text>}
-                </FormControl>
-                <FormControl id="email">
-                  <FormLabel>Your Mail</FormLabel>
-                  <InputGroup borderColor="#E0E1E7">
-                    <InputLeftElement pointerEvents="none">
-                      <MdOutlineEmail color="gray.800" />
-                    </InputLeftElement>
-                    <Input
-                      type="text"
-                      placeholder="Email"
-                      size="md"
-                      value={formData.email}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          email: e.target.value,
-                        })
-                      }
-                    />
-                  </InputGroup>
-                  {errors.email && <Text color="red">{errors.email}</Text>}
-                </FormControl>
-                <FormControl id="message">
-                  <FormLabel>Message</FormLabel>
-                  <Textarea
-                    borderColor="gray.300"
-                    _hover={{
-                      borderRadius: "gray.300",
-                    }}
-                    placeholder="Enter your message here!"
-                    value={formData.message}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        message: e.target.value,
-                      })
-                    }
-                  />
-                  {errors.message && <Text color="red">{errors.message}</Text>}
-                </FormControl>
-                <FormControl id="submit" float="right">
-                  <Button
-                    variant="solid"
-                    bg="#0D74FF"
-                    color="white"
-                    _hover={{}}
-                    onClick={handleSubmit}
-                  >
-                    Send Message
-                  </Button>
-                </FormControl>
-              </VStack>
-            </Box>
-          </WrapItem>
-        </Wrap>
+              Send Message
+            </Button>
+          </VStack>
+        </Box>
       </Flex>
     </Container>
   );

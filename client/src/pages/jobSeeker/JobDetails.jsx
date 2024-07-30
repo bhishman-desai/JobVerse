@@ -14,32 +14,27 @@ import {
 } from "@chakra-ui/react";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchJobById } from "./helper/jobApis";
+import useFetch from "../../hooks/fetch.hook";
 
 const JobDetails = () => {
-  // State for storing job details
   const [job, setJob] = useState(null);
-  // State for handling loading status
   const [loading, setLoading] = useState(true);
-  // Chakra UI Toast hook for displaying messages
+  const [userData, setUserData] = useState(null);
   const toast = useToast();
-  // Hook for navigation
   const navigate = useNavigate();
-  // Extract jobId from route parameters
   const { jobId } = useParams();
 
-  // Responsive sizes for heading, text, and button
   const headingSize = useBreakpointValue({ base: "xl", md: "2xl" });
   const textSize = useBreakpointValue({ base: "sm", md: "md" });
   const buttonSize = useBreakpointValue({ base: "sm", md: "md" });
 
+  // Fetch job details
   useEffect(() => {
     const fetchJob = async () => {
       try {
-        // Fetch job details by jobId
         const jobData = await fetchJobById(jobId);
         setJob(jobData);
       } catch (error) {
-        // Display error toast and navigate to job list on failure
         toast({
           title: "Error",
           description: "Failed to load job details.",
@@ -49,7 +44,6 @@ const JobDetails = () => {
         });
         navigate("/job-seeker/jobs");
       } finally {
-        // Set loading to false once data is fetched or an error occurs
         setLoading(false);
       }
     };
@@ -57,7 +51,15 @@ const JobDetails = () => {
     fetchJob();
   }, [jobId, navigate, toast]);
 
-  // Display spinner while data is loading
+  // Fetch user data
+  const [{ apiData }] = useFetch("");
+
+  useEffect(() => {
+    if (apiData) {
+      setUserData(apiData);
+    }
+  }, [apiData]);
+
   if (loading) {
     return (
       <Center h="100vh">
@@ -66,7 +68,6 @@ const JobDetails = () => {
     );
   }
 
-  // Display message if job is not found
   if (!job) {
     return (
       <Center h="100vh">
@@ -99,13 +100,19 @@ const JobDetails = () => {
         <Text fontSize={textSize} whiteSpace="pre-line">
           {job.jobDescription}
         </Text>
-        <Button
-          colorScheme="teal"
-          onClick={() => navigate(`/job-seeker/job/${job._id}/apply`)}
-          size={buttonSize}
-        >
-          Apply Now
-        </Button>
+        {userData ? (
+          <Button
+            colorScheme="teal"
+            onClick={() => navigate(`/job-seeker/job/${job._id}/apply`)}
+            size={buttonSize}
+          >
+            Apply Now
+          </Button>
+        ) : (
+          <Text fontSize={textSize} color="gray.500">
+            Log in to apply for this job
+          </Text>
+        )}
       </Stack>
     </Box>
   );
