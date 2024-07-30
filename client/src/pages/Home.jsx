@@ -1,10 +1,18 @@
 /* Author: Ashish Kumar Guntipalli */
-
 import React from 'react';
 import { Box, Flex, Text, Input, Button, Stack } from '@chakra-ui/react';
-import { NavLink } from 'react-router-dom';
+import {  useNavigate } from 'react-router-dom';
+import {useJobSearchStore  }  from '../store/store';
 
 const Home = () => {
+  const jobTitle = useJobSearchStore((state) => state.jobTitle);
+  const setJobTitle = useJobSearchStore((state) => state.setJobTitle);
+  const navigate = useNavigate();
+
+  const handleSearch = () => {
+    navigate('/search');
+  };
+
   return (
     <Box
       height="100vh"
@@ -36,8 +44,15 @@ const Home = () => {
           </Text>
           
           <Stack spacing={4} width="100%" maxWidth="600px" mb={8}>
-            <Input placeholder="Job title, Keywords" variant="filled" backgroundColor="white" color="black"/>
-            <Button as={NavLink} to="/page-not-found"  colorScheme="green" size="lg">Search</Button>
+            <Input 
+              placeholder="Job title, Keywords" 
+              variant="filled" 
+              backgroundColor="white" 
+              color="black"
+              value={jobTitle}
+              onChange={(e) => setJobTitle(e.target.value)}
+            />
+            <Button onClick={handleSearch} colorScheme="green" size="lg">Search</Button>
           </Stack>
         </Box>
 
@@ -48,7 +63,7 @@ const Home = () => {
           <Text fontSize={{ base: "lg", sm: "xl", md: "2xl" }} mb={8}>
             Post your job now!
           </Text>
-          <Button as="a" href="http://localhost:3000/sdjgh" colorScheme="red" size="lg">I want to recruit now!</Button>
+          <Button as="a" href="/post-job" colorScheme="red" size="lg">I want to recruit now!</Button>
         </Box>
       </Flex>
     </Box>

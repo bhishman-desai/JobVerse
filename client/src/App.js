@@ -15,7 +15,7 @@ const RegisterPage = lazy(() => import("./pages/auth/Register"));
 const ProfilePage = lazy(() => import("./pages/auth/Profile"));
 const RecoveryPage = lazy(() => import("./pages/auth/Recovery"));
 const ResetPage = lazy(() => import("./pages/auth/Reset"));
-
+const SearchResults = lazy(() => import("./pages/search/search"));
 /* Recruiter Pages*/
 const JobCreation = lazy(() => import("./pages/recruiter/JobCreation"));
 const JobsDashboard = lazy(() => import("./pages/recruiter/JobsDashboard"));
@@ -39,7 +39,7 @@ function App() {
           <Route element={withLayout(PageNotFoundPage)()} path="/about" />
           <Route element={withLayout(FaqPage)()} path="/faq" />
           <Route element={withLayout(ContactPage)()} path="/contact-us" />
-
+          <Route  element={withLayout(SearchResults)()} path="/search" />
           {/*Auth Routes*/}
           <Route element={withLayout(UserNamePage)()} path="/login" />
           <Route element={withLayout(PasswordPage)()} path="/password" />
