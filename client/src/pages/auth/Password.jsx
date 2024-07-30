@@ -40,7 +40,12 @@ export default function Password() {
         localStorage.setItem("token", token);
         localStorage.setItem('username', username);
         initializeSocket(token, username);
-        navigate("/profile");
+        let role = localStorage.getItem('role');
+        if (role === 'Recruiter') {
+          navigate("/recruiter/dashboard");
+        } else {
+          navigate("/search")
+        }
       });
     },
   });

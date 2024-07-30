@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   Box, Flex, Link, IconButton, Drawer, DrawerBody, DrawerHeader, DrawerOverlay, DrawerContent, DrawerCloseButton, useDisclosure, Image, Button, Icon, Menu, MenuButton, MenuList, MenuItem
 } from '@chakra-ui/react';
-import { HamburgerIcon, ChevronDownIcon } from '@chakra-ui/icons';
+import { HamburgerIcon } from '@chakra-ui/icons';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { FaBell, FaUser } from 'react-icons/fa';
 import logo from '../../assets/Jobverse.jpeg';
@@ -18,10 +18,10 @@ const Navbar = () => {
   const links = [
     { name: "Home", path: "/" },
     { name: "FAQ", path: "/faq" },
-    { name: "About", path: "/about" },
     { name: "Contact us", path: "/contact-us" },
     { name: "Dashboard", path: "/recruiter/dashboard", role: "recruiter" },
-    { name: "Create Job", path: "/recruiter/create-job", role: "recruiter" }
+    { name: "Create Job", path: "/recruiter/create-job", role: "recruiter" },
+    { name: "Applications", path: "/job-seeker/applications", role: "student" }
   ];
 
   const newNotification = useSocketStore((state) => state.newNotification);
@@ -55,29 +55,48 @@ const Navbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    localStorage.removeItem('userRole');
+    localStorage.removeItem('role');
     setIsLoggedIn(false);
     setUserRole(null);
     navigate('/login');
   };
 
   const renderLinks = () => {
-    if (isLoggedIn && userRole === 'Recruiter') {
-      return links.filter(link => link.role === 'recruiter').map(link => (
-        <Link
-          as={NavLink}
-          to={link.path}
-          key={link.name}
-          px={4}
-          py={2}
-          className="text-black font-semibold"
-          borderBottom={{ base: 'none', md: selected === link.name ? "2px solid black" : "none" }}
-          onClick={() => handleSelect(link.name)}
-          _hover={{ backgroundColor: 'gray.300' }}
-        >
-          {link.name}
-        </Link>
-      ));
+    if (isLoggedIn) {
+      if (userRole === 'Recruiter') {
+
+        return links.filter(link => link.role === 'recruiter').map(link => (
+          <Link
+            as={NavLink}
+            to={link.path}
+            key={link.name}
+            px={4}
+            py={2}
+            className="text-black font-semibold"
+            borderBottom={{ base: 'none', md: selected === link.name ? "2px solid black" : "none" }}
+            onClick={() => handleSelect(link.name)}
+            _hover={{ backgroundColor: 'gray.300' }}
+          >
+            {link.name}
+          </Link>
+        ));
+      } else {
+        return links.filter(link => link.role === 'student').map(link => (
+          <Link
+            as={NavLink}
+            to={link.path}
+            key={link.name}
+            px={4}
+            py={2}
+            className="text-black font-semibold"
+            borderBottom={{ base: 'none', md: selected === link.name ? "2px solid black" : "none" }}
+            onClick={() => handleSelect(link.name)}
+            _hover={{ backgroundColor: 'gray.300' }}
+          >
+            {link.name}
+          </Link>
+        ));
+      }
     }
     return links.filter(link => !link.role).map(link => (
       <Link
@@ -141,8 +160,10 @@ const Navbar = () => {
                 </Box>
               </Link>
               <Menu>
-                <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                  <Icon as={FaUser} boxSize={6} />
+                <MenuButton as={Button} px={4} py={2} backgroundColor="transparent" _hover={{ backgroundColor: 'gray.300' }}>
+                  <Box display="inline-block">
+                    <Icon as={FaUser} boxSize={6} />
+                  </Box>
                 </MenuButton>
                 <MenuList>
                   <MenuItem as={NavLink} to="/profile">Update Profile</MenuItem>

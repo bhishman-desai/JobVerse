@@ -63,11 +63,11 @@ const NotificationCard = ({ heading, createdAt, content, onDelete, type, id }) =
     const getTypeColor = (type) => {
         switch (type) {
             case 'chat':
-                return 'blue.400';
+                return '#6366F1';
             case 'application':
-                return 'green.400';
+                return '#FF6A6A';
             case 'statusChange':
-                return 'orange.400';
+                return '#6A7280';
             default:
                 return 'gray.400';
         }

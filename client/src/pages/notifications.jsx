@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
     Box,
     Text,
@@ -21,9 +21,7 @@ const Notifications = () => {
             } catch (error) {
                 console.error('Error loading notifications:', error);
             }
-            console.log(notifications)
         };
-        console.log(notifications)
         loadData();
     }, []);
 
@@ -36,17 +34,21 @@ const Notifications = () => {
             <Flex w={["100%", "95%", "50%", "50%"]} m="auto" justifyContent='flex-start' align="top" flexDir={"column"}>
                 <Text fontSize="3xl" my="3" textAlign="flex-start" ml="5" fontWeight="medium">Notifications</Text>
                 <Flex w="100%" justifyContent={'center'} marginLeft={10} marginRight={10} direction={'column'}>
-                    {notifications.map((notification) => (
-                        <NotificationCard
-                            key={notification._id}
-                            id={notification._id}
-                            heading={notification.heading}
-                            type={notification.type}
-                            content={notification.content}
-                            createdAt={notification.createdAt}
-                            onDelete={() => handleDelete(notification._id)}
-                        />
-                    ))}
+                    {notifications.length === 0 ? (
+                        <Text fontSize="xl" my="3" textAlign="center" color="gray.500">No notifications to display</Text>
+                    ) : (
+                        notifications.map((notification) => (
+                            <NotificationCard
+                                key={notification._id}
+                                id={notification._id}
+                                heading={notification.heading}
+                                type={notification.type}
+                                content={notification.content}
+                                createdAt={notification.createdAt}
+                                onDelete={() => handleDelete(notification._id)}
+                            />
+                        ))
+                    )}
                 </Flex>
             </Flex>
         </Box>
