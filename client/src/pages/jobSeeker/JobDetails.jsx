@@ -13,13 +13,14 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchJobById } from "./helper/jobApis";
+import { fetchJobById, fetchApplicationsByEmail } from "./helper/jobApis";
 import useFetch from "../../hooks/fetch.hook";
 
 const JobDetails = () => {
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);
+  const [hasApplied, setHasApplied] = useState(false);
   const toast = useToast();
   const navigate = useNavigate();
   const { jobId } = useParams();
@@ -57,8 +58,21 @@ const JobDetails = () => {
   useEffect(() => {
     if (apiData) {
       setUserData(apiData);
+      // Check if the user has already applied for the job
+      if (apiData.email) {
+        fetchApplicationsByEmail(apiData.email)
+          .then((applications) => {
+            const applied = applications.some(
+              (application) => application.jobId._id === jobId
+            );
+            setHasApplied(applied);
+          })
+          .catch((error) => {
+            console.error("Error fetching applications:", error);
+          });
+      }
     }
-  }, [apiData]);
+  }, [apiData, jobId]);
 
   if (loading) {
     return (
@@ -104,6 +118,10 @@ const JobDetails = () => {
           userData.roles && userData.roles.Recruiter ? (
             <Text fontSize={textSize} color="gray.500">
               Recruiters cannot apply for jobs.
+            </Text>
+          ) : hasApplied ? (
+            <Text fontSize={textSize} color="green.500">
+              You have already applied for this job.
             </Text>
           ) : (
             <Button
