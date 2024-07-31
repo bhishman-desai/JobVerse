@@ -16,16 +16,14 @@ import {
 } from "@chakra-ui/react";
 import JobListing from "./helper/jobListings";
 import { fetchJobs } from "./helper/api";
-import { fetchApplicationsByEmail } from "../jobSeeker/helper/jobApis.js";
 import { useJobSearchStore } from "../../store/store.js";
 import useFetch from "../../hooks/fetch.hook";
 
 const JobSearch = () => {
-  const [location, setLocation] = useState(""); // Default location
-  const [datePosted, setDatePosted] = useState(""); // Default date posted
-  const [payRange, setPayRange] = useState(""); // Default pay range
+  const [location, setLocation] = useState("");
+  const [datePosted, setDatePosted] = useState("");
+  const [payRange, setPayRange] = useState("");
   const [jobs, setJobs] = useState([]);
-  const [applications, setApplications] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -33,46 +31,33 @@ const JobSearch = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const [currentUserId, setCurrentUserId] = useState(null);
-  const [email, setEmail] = useState("");
-
   const jobTitle = useJobSearchStore((state) => state.jobTitle);
   const setJobTitle = useJobSearchStore((state) => state.setJobTitle);
 
+  // Update searchTerm when jobTitle changes
   useEffect(() => {
-    setSearchTerm(jobTitle); // Ensure this is run on jobTitle change
+    setSearchTerm(jobTitle);
   }, [jobTitle]);
 
   const debounceRef = useRef(null);
 
+  // Debounce search to avoid triggering on every keystroke
   useEffect(() => {
-    // Clear the previous timeout if it exists
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
     }
-
-    // Set a new timeout
     debounceRef.current = setTimeout(() => {
       handleSearch();
-    }, 500); // 500 ms debounce delay
-
-    // Cleanup function to clear timeout on component unmount
-    return () => {
-      if (debounceRef.current) {
-        clearTimeout(debounceRef.current);
-      }
-    };
-  }, [searchTerm, location, datePosted, payRange]);
+    }, 500);
+    return () => clearTimeout(debounceRef.current);
+  }, [location, datePosted, payRange]);
 
   const toggleFilters = () => setShowFilters(!showFilters);
 
   const [{ apiData, isLoading: userLoading }] = useFetch("");
 
   useEffect(() => {
-    if (apiData) {
-      setCurrentUserId(apiData._id);
-      setEmail(apiData.email);
-    }
+    // Handle any necessary side effects with apiData
   }, [apiData]);
 
   const handleSearch = async () => {
@@ -86,12 +71,7 @@ const JobSearch = () => {
       });
       setJobs(jobsData);
       setCurrentPage(1);
-
-      if (jobsData.length === 0) {
-        setErrorMessage("No job postings found for the given criteria.");
-      } else {
-        setErrorMessage("");
-      }
+      setErrorMessage(jobsData.length ? "" : "No job postings found.");
     } catch (error) {
       setErrorMessage(error.message);
     } finally {
@@ -99,21 +79,7 @@ const JobSearch = () => {
     }
   };
 
-  useEffect(() => {
-    if (email) {
-      fetchApplicationsByEmail(email)
-        .then((applicationsData) => {
-          setApplications(applicationsData);
-        })
-        .catch((error) => {
-          console.error("Error fetching applications:", error);
-        });
-    }
-  }, [email]);
-
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
+  const handlePageChange = (page) => setCurrentPage(page);
 
   const totalPages = Math.ceil(jobs.length / jobsPerPage);
   const paginatedJobs = jobs.slice(
@@ -155,6 +121,7 @@ const JobSearch = () => {
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
               >
+                {/* Location options */}
                 <option value="Ontario">Ontario</option>
                 <option value="British Columbia">British Columbia</option>
                 <option value="Alberta">Alberta</option>
@@ -227,18 +194,7 @@ const JobSearch = () => {
             {errorMessage ? (
               <Text color="red.500">{errorMessage}</Text>
             ) : (
-              paginatedJobs.map((job) => {
-                const alreadyApplied = applications.some(
-                  (application) => application.jobId._id === job._id
-                );
-                return (
-                  <JobListing
-                    key={job._id}
-                    job={job}
-                    alreadyApplied={alreadyApplied}
-                  />
-                );
-              })
+              paginatedJobs.map((job) => <JobListing key={job._id} job={job} />)
             )}
             {jobs.length > jobsPerPage && (
               <Stack direction="row" spacing={2}>
