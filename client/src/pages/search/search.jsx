@@ -1,5 +1,3 @@
-/* Author: Sivaprakash Chittu Hariharan */
-
 import React, { useState, useEffect } from "react";
 import {
   ChakraProvider,
@@ -8,7 +6,6 @@ import {
   Select,
   Button,
   Stack,
-  HStack,
   VStack,
   Center,
   Text,
@@ -23,30 +20,37 @@ import { useJobSearchStore } from "../../store/store.js";
 import useFetch from "../../hooks/fetch.hook";
 
 const JobSearch = () => {
-  // State hooks for managing form inputs and job listings
-  const [location, setLocation] = useState("");
-  const [datePosted, setDatePosted] = useState("");
-  const [payRange, setPayRange] = useState("");
+  const [location, setLocation] = useState(""); // Default location
+  const [datePosted, setDatePosted] = useState(""); // Default date posted
+  const [payRange, setPayRange] = useState(""); // Default pay range
   const [jobs, setJobs] = useState([]);
   const [applications, setApplications] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const jobsPerPage = 5;
-  // State for loading indicators
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  // Accessing jobTitle from the global store and setting it
   const [currentUserId, setCurrentUserId] = useState(null);
   const [email, setEmail] = useState("");
 
   const jobTitle = useJobSearchStore((state) => state.jobTitle);
   const setJobTitle = useJobSearchStore((state) => state.setJobTitle);
 
-  // Toggle the visibility of the filter options
+  
+  useEffect(() => {
+  
+    setSearchTerm(jobTitle); // Ensure this is run on jobTitle change
+  }, [jobTitle]); // Depend on jobTitle only
+
+  useEffect(() => {
+    handleSearch();
+  }, [searchTerm, location, datePosted, payRange]); // Depend on searchTerm
+
   const toggleFilters = () => setShowFilters(!showFilters);
 
-  const [{ apiData, isLoading: userLoading, serverError }] = useFetch("");
+  const [{ apiData, isLoading: userLoading }] = useFetch("");
 
   useEffect(() => {
     if (apiData) {
@@ -56,29 +60,27 @@ const JobSearch = () => {
   }, [apiData]);
 
   const handleSearch = async () => {
-    setLoading(true); // Set loading true when starting the search
+
+    setLoading(true);
     try {
-      // Fetch jobs based on the search criteria
       const jobsData = await fetchJobs({
-        jobTitle,
+        jobTitle: searchTerm,
         location,
         datePosted,
         payRange,
       });
       setJobs(jobsData);
-      setCurrentPage(1); // Reset to the first page on a new search
+      setCurrentPage(1);
 
-      // Handle cases where no jobs are found
       if (jobsData.length === 0) {
         setErrorMessage("No job postings found for the given criteria.");
       } else {
         setErrorMessage("");
       }
     } catch (error) {
-      // Handle errors from the API request
       setErrorMessage(error.message);
     } finally {
-      setLoading(false); // Set loading false after fetching jobs
+      setLoading(false);
     }
   };
 
@@ -94,17 +96,10 @@ const JobSearch = () => {
     }
   }, [email]);
 
-  // Perform a search when the component mounts
-  useEffect(() => {
-    handleSearch();
-  }, [email, jobTitle, location, datePosted, payRange]);
-
-  // Function to handle pagination
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
 
-  // Calculate total pages for pagination
   const totalPages = Math.ceil(jobs.length / jobsPerPage);
   const paginatedJobs = jobs.slice(
     (currentPage - 1) * jobsPerPage,
@@ -120,12 +115,6 @@ const JobSearch = () => {
         <Spinner size="xl" />
       </Center>
     );
-  if (serverError)
-    return (
-      <Center>
-        <Text color="red.500">Error fetching user data.</Text>
-      </Center>
-    );
 
   return (
     <ChakraProvider>
@@ -137,15 +126,14 @@ const JobSearch = () => {
               spacing={[2, 3, 4]}
               width="100%"
               justifyContent="center"
+              align="center"
             >
-              {/* Input field for job title */}
               <Input
                 placeholder="Job Title"
                 width={inputWidth}
-                value={jobTitle}
-                onChange={(e) => setJobTitle(e.target.value)}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
-              {/* Dropdown for location selection */}
               <Select
                 placeholder="Select Location"
                 width={inputWidth}
@@ -172,7 +160,6 @@ const JobSearch = () => {
                 <option value="Nunavut">Nunavut</option>
                 <option value="Yukon">Yukon</option>
               </Select>
-              {/* Button to trigger search */}
               <Button
                 colorScheme="teal"
                 height="40px"
@@ -181,20 +168,19 @@ const JobSearch = () => {
               >
                 Search
               </Button>
-              {/* Button to toggle filter options visibility */}
               <Button variant="link" onClick={toggleFilters}>
                 {showFilters ? "Hide Filters" : "Show Filters"}
               </Button>
             </Stack>
             <Collapse in={showFilters}>
-              <HStack
+              <Stack
+                direction={stackDirection}
                 spacing={[2, 3, 4]}
                 mt={[2, 3, 4]}
                 justifyContent="center"
-                direction={stackDirection}
                 width="100%"
+                align="center"
               >
-                {/* Dropdown for date posted filter */}
                 <Select
                   placeholder="Date Posted"
                   width={inputWidth}
@@ -206,7 +192,6 @@ const JobSearch = () => {
                   <option value="this_week">This Week</option>
                   <option value="this_month">This Month</option>
                 </Select>
-                {/* Dropdown for pay range filter */}
                 <Select
                   placeholder="Pay Range"
                   width={inputWidth}
@@ -214,21 +199,19 @@ const JobSearch = () => {
                   value={payRange}
                   onChange={(e) => setPayRange(e.target.value)}
                 >
-                  <option value="0-50000">$0 - $50,000</option>
-                  <option value="50000-100000">$50,000 - $100,000</option>
-                  <option value="100000">$100,000+</option>
+                  <option value="0-50000">$0 - $50k</option>
+                  <option value="50000-100000">$50k - $100k</option>
+                  <option value="100000">$100k+</option>
                 </Select>
-              </HStack>
+              </Stack>
             </Collapse>
           </VStack>
         </Center>
         <Center>
           <VStack spacing={[3, 4]} width="100%">
-            {/* Display error message if any */}
             {errorMessage ? (
               <Text color="red.500">{errorMessage}</Text>
             ) : (
-              // Display paginated job listings
               paginatedJobs.map((job) => {
                 const alreadyApplied = applications.some(
                   (application) => application.jobId._id === job._id
@@ -242,9 +225,8 @@ const JobSearch = () => {
                 );
               })
             )}
-            {/* Pagination controls */}
             {jobs.length > jobsPerPage && (
-              <HStack spacing={2}>
+              <Stack direction="row" spacing={2}>
                 <Button
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
@@ -266,7 +248,7 @@ const JobSearch = () => {
                 >
                   Next
                 </Button>
-              </HStack>
+              </Stack>
             )}
           </VStack>
         </Center>
