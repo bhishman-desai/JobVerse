@@ -8,7 +8,7 @@ import { FaBell, FaUser } from 'react-icons/fa';
 import logo from '../../assets/Jobverse.jpeg';
 import { useSocketStore } from '../../store/store';
 
-
+import { useToast } from '@chakra-ui/react';
 
 const Navbar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -17,6 +17,7 @@ const Navbar = () => {
   const [userRole, setUserRole] = useState(null); // State to manage user role
   const location = useLocation();
   const navigate = useNavigate();
+  const toast = useToast(); 
   const links = [
     { name: "Home", path: "/" },
     { name: "FAQ", path: "/faq" },
@@ -62,9 +63,22 @@ const Navbar = () => {
     localStorage.removeItem('role');
     setIsLoggedIn(false);
     setUserRole(null);
-
-    navigate('/');
+  
+    // Show toast notification
+    toast({
+      title: "Logged out",
+      description: "You have logged out successfully.",
+      status: "success",
+      duration: 2000,
+      isClosable: true,
+    });
+  
+    // Delay navigation slightly to allow toast to display
+    setTimeout(() => {
+      navigate('/');
+    }, 2500); // Adjust the delay as needed
   };
+  
 
   const renderLinks = () => {
     if (isLoggedIn) {
