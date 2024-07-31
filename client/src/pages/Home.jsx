@@ -1,17 +1,21 @@
 import React from 'react';
-import { Box, Flex, Text, Input, Button, Stack } from '@chakra-ui/react';
+import { Box, Flex, Text, Input, Button, Stack, Tooltip } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { useJobSearchStore } from '../store/store';
- 
+
 const Home = () => {
   const jobTitle = useJobSearchStore((state) => state.jobTitle);
   const setJobTitle = useJobSearchStore((state) => state.setJobTitle);
   const navigate = useNavigate();
- 
+
+  // Check the role from localStorage
+  const role = localStorage.getItem("role");
+  console.log("User Role:", role); // Log the role for debugging
+
   const handleSearch = () => {
     navigate('/search');
   };
- 
+
   return (
     <Box
       height="100vh"
@@ -41,7 +45,7 @@ const Home = () => {
           <Text fontSize={{ base: "lg", sm: "xl", md: "2xl" }} mb={8}>
             Start your job search now!
           </Text>
-         
+
           <Stack spacing={4} width="100%" maxWidth="600px" mb={8}>
             <Input
               placeholder="Position Name"
@@ -54,7 +58,7 @@ const Home = () => {
             <Button onClick={handleSearch} colorScheme="green" size="lg">Search</Button>
           </Stack>
         </Box>
- 
+
         <Box flex="1" marginLeft={{ lg: "4" }}>
           <Text fontSize={{ base: "2xl", sm: "3xl", md: "4xl" }} mb={4}>
             Are you an <Text as="span" color="orange">employer</Text> looking for the perfect candidate?
@@ -62,11 +66,25 @@ const Home = () => {
           <Text fontSize={{ base: "lg", sm: "xl", md: "2xl" }} mb={8}>
             Post your job now!
           </Text>
-          <Button as="a" href="/recruiter/dashboard" colorScheme="orange" size="lg">I want to recruit now!</Button>
+          <Tooltip
+            label="You need to be logged in as an employer to recruit."
+            shouldWrapChildren
+            isDisabled={role !== "Student"}
+          >
+            <Button
+              as="a"
+              href="/recruiter/dashboard"
+              colorScheme="orange"
+              size="lg"
+              isDisabled={role === "Student"} // Disable button if role is Student
+            >
+              I want to recruit now!
+            </Button>
+          </Tooltip>
         </Box>
       </Flex>
     </Box>
   );
 };
- 
+
 export default Home;
