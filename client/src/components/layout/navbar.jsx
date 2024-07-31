@@ -21,7 +21,8 @@ const Navbar = () => {
     { name: "Contact us", path: "/contact-us" },
     { name: "Dashboard", path: "/recruiter/dashboard", role: "recruiter" },
     { name: "Create Job", path: "/recruiter/create-job", role: "recruiter" },
-    { name: "Applications", path: "/job-seeker/applications", role: "student" }
+    { name: "Applications", path: "/job-seeker/applications", role: "student" },
+    { name: "Bookmarks", path: "/job-seeker/bookmarks", role: "student" }
   ];
 
   const newNotification = useSocketStore((state) => state.newNotification);

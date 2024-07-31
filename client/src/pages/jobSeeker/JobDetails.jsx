@@ -1,5 +1,3 @@
-/* Jayrajsinh Mahavirsinh Jadeja */
-
 import React, { useState, useEffect } from "react";
 import {
   Box,
@@ -11,9 +9,11 @@ import {
   Spinner,
   useToast,
   useBreakpointValue,
+  IconButton,
 } from "@chakra-ui/react";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchJobById, fetchApplicationsByEmail } from "./helper/jobApis";
+import { BiBookmark, BiBookmarkAlt } from "react-icons/bi";
+import { fetchJobById, fetchUserBookmarks, toggleBookmark, fetchApplicationsByEmail } from "./helper/jobApis";
 import useFetch from "../../hooks/fetch.hook";
 
 const JobDetails = () => {
@@ -21,6 +21,7 @@ const JobDetails = () => {
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);
   const [hasApplied, setHasApplied] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
   const toast = useToast();
   const navigate = useNavigate();
   const { jobId } = useParams();
@@ -29,7 +30,7 @@ const JobDetails = () => {
   const textSize = useBreakpointValue({ base: "sm", md: "md" });
   const buttonSize = useBreakpointValue({ base: "sm", md: "md" });
 
-  // Fetch job details
+  // Fetch job details and bookmark status
   useEffect(() => {
     const fetchJob = async () => {
       try {
@@ -49,6 +50,23 @@ const JobDetails = () => {
       }
     };
 
+    const fetchBookmarkStatus = async () => {
+      const username = localStorage.getItem("username");
+
+      if (!username) {
+        console.error("User not logged in");
+        return;
+      }
+
+      try {
+        const bookmarks = await fetchUserBookmarks(username);
+        setIsBookmarked(bookmarks.some((bookmark) => bookmark._id === jobId));
+      } catch (error) {
+        console.error("Error fetching bookmarks:", error);
+      }
+    };
+
+    fetchBookmarkStatus();
     fetchJob();
   }, [jobId, navigate, toast]);
 
@@ -58,7 +76,6 @@ const JobDetails = () => {
   useEffect(() => {
     if (apiData) {
       setUserData(apiData);
-      // Check if the user has already applied for the job
       if (apiData.email) {
         fetchApplicationsByEmail(apiData.email)
           .then((applications) => {
@@ -73,6 +90,23 @@ const JobDetails = () => {
       }
     }
   }, [apiData, jobId]);
+
+  // Toggle bookmark status
+  const handleToggleBookmark = async () => {
+    const username = localStorage.getItem("username");
+
+    if (!username) {
+      console.error("User not logged in");
+      return;
+    }
+
+    try {
+      await toggleBookmark(username, job._id, isBookmarked);
+      setIsBookmarked((prev) => !prev);
+    } catch (error) {
+      console.error("Error updating bookmark:", error);
+    }
+  };
 
   if (loading) {
     return (
@@ -93,7 +127,17 @@ const JobDetails = () => {
   }
 
   return (
-    <Box p={6} maxW="container.md" mx="auto">
+    <Box p={6} maxW="container.md" mx="auto" position="relative">
+      <IconButton
+        icon={isBookmarked ? <BiBookmark /> : <BiBookmarkAlt />}
+        onClick={handleToggleBookmark}
+        colorScheme={isBookmarked ? "teal" : "gray"}
+        size="md"
+        position="absolute"
+        top="10px"
+        right="10px"
+        aria-label="Bookmark"
+      />
       <Heading as="h1" size={headingSize} mb={4}>
         {job.positionName}
       </Heading>

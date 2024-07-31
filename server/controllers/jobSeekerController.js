@@ -156,3 +156,83 @@ export const getUserApplications = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// Controller to add a bookmark
+export const addBookmark = async (req, res) => {
+  try {
+    const { username, jobId } = req.body;
+    console.log("marker1")
+    console.log(username, jobId)
+
+    if (!username || !jobId) {
+      return res.status(400).json({ message: "Username and Job ID are required" });
+    }
+    console.log("marker2")
+    const user = await UserModel.findOne({ username });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.bookmarks.includes(jobId)) {
+      return res.status(400).json({ message: "Job is already bookmarked" });
+    }
+
+    user.bookmarks.push(jobId);
+    await user.save();
+
+    res.status(200).json({ message: "Job bookmarked successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Controller to remove a bookmark
+export const removeBookmark = async (req, res) => {
+  try {
+    const { username, jobId } = req.body;
+
+    if (!username || !jobId) {
+      return res.status(400).json({ message: "Username and Job ID are required" });
+    }
+
+    const user = await UserModel.findOne({ username });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (!user.bookmarks.includes(jobId)) {
+      return res.status(400).json({ message: "Job is not bookmarked" });
+    }
+
+    user.bookmarks = user.bookmarks.filter((id) => id.toString() !== jobId);
+    await user.save();
+
+    res.status(200).json({ message: "Job removed from bookmarks" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Controller to get all bookmarks of a user
+export const getBookmarksByUser = async (req, res) => {
+  try {
+    const { username } = req.body;
+
+    if (!username) {
+      return res.status(400).json({ message: "Username is required" });
+    }
+
+    const user = await UserModel.findOne({ username }).populate("bookmarks");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Return the bookmarks
+    res.status(200).json(user.bookmarks);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
