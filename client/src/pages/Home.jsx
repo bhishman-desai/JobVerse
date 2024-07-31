@@ -73,10 +73,11 @@ const Home = () => {
           >
             <Button
               as="a"
-              href="/recruiter/dashboard"
+              href={role !== "Student" ? "/recruiter/dashboard" : undefined}
               colorScheme="orange"
               size="lg"
               isDisabled={role === "Student"} // Disable button if role is Student
+              pointerEvents={role === "Student" ? "none" : "auto"} // Ensure button is non-clickable
             >
               I want to recruit now!
             </Button>
