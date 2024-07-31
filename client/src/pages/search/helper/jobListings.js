@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Box, VStack, Text, Button, IconButton } from "@chakra-ui/react";
+import { Box, VStack, Text, Button, IconButton, Tooltip } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { BiBookmark, BiBookmarkAlt } from "react-icons/bi";
-import {fetchUserBookmarks, toggleBookmark} from "../../search/helper/api"
+import { fetchUserBookmarks, toggleBookmark } from "../../search/helper/api";
 
 const JobListing = ({ job, alreadyApplied }) => {
   const navigate = useNavigate();
-  const [isBookmarked, setIsBookmarked] = useState(null);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [bookmarkDisabled, setBookmarkDisabled] = useState(false);
 
   useEffect(() => {
     const fetchBookmarkStatus = async () => {
@@ -14,18 +16,25 @@ const JobListing = ({ job, alreadyApplied }) => {
 
       if (!username) {
         console.error("User not logged in");
+        setBookmarkDisabled(true);
+        setIsLoading(false);
         return;
       }
 
       try {
         const bookmarks = await fetchUserBookmarks(username);
         setIsBookmarked(bookmarks.some((bookmark) => bookmark._id === job._id));
+        setBookmarkDisabled(false); // Enable button if fetch is successful
       } catch (error) {
+        if (error.response && error.response.status === 401) {
+          setBookmarkDisabled(true); // Disable button on 401 error
+        }
         console.error("Error fetching bookmarks:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    // Fetch bookmark status on mount
     fetchBookmarkStatus();
   }, [job._id]);
 
@@ -59,17 +68,24 @@ const JobListing = ({ job, alreadyApplied }) => {
       width="100%"
       position="relative"
     >
-      <IconButton
-        icon={isBookmarked === null ? null : (isBookmarked ? <BiBookmark /> : <BiBookmarkAlt />)}
-        onClick={handleToggleBookmark}
-        colorScheme={isBookmarked ? "teal" : "gray"}
-        size="sm"
-        position="absolute"
-        top="8px"
-        right="8px"
-        aria-label="Bookmark"
-        isLoading={isBookmarked === null} // Show loading state while fetching
-      />
+      <Tooltip
+        label="You need to log in to bookmark this job"
+        isDisabled={!bookmarkDisabled} 
+        placement="right" 
+      >
+          <IconButton 
+            icon={isBookmarked ? <BiBookmark /> : <BiBookmarkAlt />}
+            onClick={handleToggleBookmark}
+            colorScheme={isBookmarked ? "teal" : "gray"}
+            size="sm"
+            position="absolute"
+            top="8px"
+            right="8px"
+            aria-label="Bookmark"
+            isDisabled={bookmarkDisabled}
+            isLoading={isLoading} 
+          />
+      </Tooltip>
       <VStack align="flex-start" spacing={2}>
         <Text fontSize="lg" fontWeight="bold">
           {job.positionName}

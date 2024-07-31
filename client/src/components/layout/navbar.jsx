@@ -8,6 +8,8 @@ import { FaBell, FaUser } from 'react-icons/fa';
 import logo from '../../assets/Jobverse.jpeg';
 import { useSocketStore } from '../../store/store';
 
+
+
 const Navbar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selected, setSelected] = useState("");
@@ -56,10 +58,12 @@ const Navbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('username');
     localStorage.removeItem('role');
     setIsLoggedIn(false);
     setUserRole(null);
-    navigate('/login');
+
+    navigate('/');
   };
 
   const renderLinks = () => {
