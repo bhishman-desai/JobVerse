@@ -1,5 +1,5 @@
 /* Author: Sivaprakash Chittu Hariharan */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   ChakraProvider,
   Box,
@@ -39,15 +39,30 @@ const JobSearch = () => {
   const jobTitle = useJobSearchStore((state) => state.jobTitle);
   const setJobTitle = useJobSearchStore((state) => state.setJobTitle);
 
-  
   useEffect(() => {
-  
     setSearchTerm(jobTitle); // Ensure this is run on jobTitle change
-  }, [jobTitle]); // Depend on jobTitle only
+  }, [jobTitle]);
+
+  const debounceRef = useRef(null);
 
   useEffect(() => {
-    handleSearch();
-  }, [searchTerm, location, datePosted, payRange]); // Depend on searchTerm
+    // Clear the previous timeout if it exists
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+
+    // Set a new timeout
+    debounceRef.current = setTimeout(() => {
+      handleSearch();
+    }, 500); // 500 ms debounce delay
+
+    // Cleanup function to clear timeout on component unmount
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    };
+  }, [searchTerm, location, datePosted, payRange]);
 
   const toggleFilters = () => setShowFilters(!showFilters);
 
@@ -61,7 +76,6 @@ const JobSearch = () => {
   }, [apiData]);
 
   const handleSearch = async () => {
-
     setLoading(true);
     try {
       const jobsData = await fetchJobs({
