@@ -20,9 +20,9 @@ import { useJobSearchStore } from "../../store/store.js";
 import useFetch from "../../hooks/fetch.hook";
 
 const JobSearch = () => {
-  const [location, setLocation] = useState("");
-  const [datePosted, setDatePosted] = useState("");
-  const [payRange, setPayRange] = useState("");
+  const [location, setLocation] = useState(""); // Default location
+  const [datePosted, setDatePosted] = useState(""); // Default date posted
+  const [payRange, setPayRange] = useState(""); // Default pay range
   const [jobs, setJobs] = useState([]);
   const [applications, setApplications] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
@@ -38,6 +38,16 @@ const JobSearch = () => {
   const jobTitle = useJobSearchStore((state) => state.jobTitle);
   const setJobTitle = useJobSearchStore((state) => state.setJobTitle);
 
+  
+  useEffect(() => {
+  
+    setSearchTerm(jobTitle); // Ensure this is run on jobTitle change
+  }, [jobTitle]); // Depend on jobTitle only
+
+  useEffect(() => {
+    handleSearch();
+  }, [searchTerm, location, datePosted, payRange]); // Depend on searchTerm
+
   const toggleFilters = () => setShowFilters(!showFilters);
 
   const [{ apiData, isLoading: userLoading }] = useFetch("");
@@ -50,6 +60,7 @@ const JobSearch = () => {
   }, [apiData]);
 
   const handleSearch = async () => {
+
     setLoading(true);
     try {
       const jobsData = await fetchJobs({
@@ -84,18 +95,6 @@ const JobSearch = () => {
         });
     }
   }, [email]);
-
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      setJobTitle(searchTerm);
-    }, 500);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm, setJobTitle]);
-
-  useEffect(() => {
-    handleSearch();
-  }, [jobTitle, location, datePosted, payRange]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
