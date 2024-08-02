@@ -17,7 +17,6 @@ import {
 import JobListing from "./helper/jobListings";
 import { fetchJobs } from "./helper/api";
 import { useJobSearchStore } from "../../store/store.js";
-import useFetch from "../../hooks/fetch.hook";
 
 const JobSearch = () => {
   const [location, setLocation] = useState("");
@@ -28,37 +27,21 @@ const JobSearch = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const jobsPerPage = 5;
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Set initial loading to false
   const [searchTerm, setSearchTerm] = useState("");
 
   const jobTitle = useJobSearchStore((state) => state.jobTitle);
   const setJobTitle = useJobSearchStore((state) => state.setJobTitle);
+  
 
   // Update searchTerm when jobTitle changes
   useEffect(() => {
     setSearchTerm(jobTitle);
+    handleSearchfirst();
   }, [jobTitle]);
 
-  const debounceRef = useRef(null);
-
-  // Debounce search to avoid triggering on every keystroke
-  useEffect(() => {
-    if (debounceRef.current) {
-      clearTimeout(debounceRef.current);
-    }
-    debounceRef.current = setTimeout(() => {
-      handleSearch();
-    }, 500);
-    return () => clearTimeout(debounceRef.current);
-  }, [location, datePosted, payRange]);
 
   const toggleFilters = () => setShowFilters(!showFilters);
-
-  const [{ apiData, isLoading: userLoading }] = useFetch("");
-
-  useEffect(() => {
-    // Handle any necessary side effects with apiData
-  }, [apiData]);
 
   const handleSearch = async () => {
     setLoading(true);
@@ -79,6 +62,24 @@ const JobSearch = () => {
     }
   };
 
+  const handleSearchfirst = async () => {
+    setLoading(true);
+    try {
+      const jobsData = await fetchJobs({
+        jobTitle: jobTitle,
+        location,
+        datePosted,
+        payRange,
+      });
+      setJobs(jobsData);
+      setCurrentPage(1);
+      setErrorMessage(jobsData.length ? "" : "No job postings found.");
+    } catch (error) {
+      setErrorMessage(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
   const handlePageChange = (page) => setCurrentPage(page);
 
   const totalPages = Math.ceil(jobs.length / jobsPerPage);
@@ -90,13 +91,7 @@ const JobSearch = () => {
   const stackDirection = useBreakpointValue({ base: "column", md: "row" });
   const inputWidth = useBreakpointValue({ base: "100%", md: "200px" });
 
-  if (userLoading || loading)
-    return (
-      <Center h="100vh">
-        <Spinner size="xl" />
-      </Center>
-    );
-
+  
   return (
     <ChakraProvider>
       <Box p={[2, 3, 5]}>
