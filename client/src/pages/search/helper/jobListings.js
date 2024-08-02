@@ -14,8 +14,8 @@ const JobListing = ({ job, alreadyApplied }) => {
   useEffect(() => {
     const fetchBookmarkStatus = async () => {
       const username = localStorage.getItem("username");
-
-      if (!username) {
+      const role = localStorage.getItem("role");
+      if (!username || role === "Recruiter") {
         console.error("User not logged in");
         setBookmarkDisabled(true);
         setIsLoading(false);
@@ -70,7 +70,7 @@ const JobListing = ({ job, alreadyApplied }) => {
       position="relative"
     >
       <Tooltip
-        label="You need to log in to bookmark this job"
+        label="You need to login as student to bookmark!"
         isDisabled={!bookmarkDisabled} 
         placement="right" 
       >
