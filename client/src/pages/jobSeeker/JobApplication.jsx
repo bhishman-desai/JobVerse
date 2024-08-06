@@ -10,6 +10,8 @@ import {
   FormLabel,
   useToast,
   useBreakpointValue,
+  Spinner,
+  Center,
 } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { applyForJob, fetchJobById } from "./helper/jobApis";
@@ -26,6 +28,7 @@ const JobApplication = () => {
   const [coverLetterRequired, setCoverLetterRequired] = useState(false);
   // State for handling loading status
   const [loading, setLoading] = useState(false);
+  const [jobLoading, setJobLoading] = useState(true);
   // Chakra UI Toast hook for displaying messages
   const toast = useToast();
   // Hook for navigation
@@ -47,6 +50,8 @@ const JobApplication = () => {
         setCoverLetterRequired(jobDetails.coverLetterRequired);
       } catch (error) {
         console.error("Error fetching job details:", error);
+      } finally {
+        setJobLoading(false);
       }
     };
 
@@ -74,7 +79,9 @@ const JobApplication = () => {
         throw new Error("Cover Letter is required.");
       }
       formData.append("resume", resume);
-      formData.append("coverLetter", coverLetter);
+      if (coverLetterRequired) {
+        formData.append("coverLetter", coverLetter);
+      }
       formData.append("jobId", jobId);
 
       // Submit application
@@ -105,8 +112,16 @@ const JobApplication = () => {
   };
 
   // Display loading state or error if applicable
-  if (isLoading) return <p>Loading...</p>;
-  if (serverError) return <p>Error fetching user data.</p>;
+  if (isLoading || jobLoading) {
+    return (
+      <Center h="100vh">
+        <Spinner size="xl" />
+      </Center>
+    );
+  }
+  if (serverError) {
+    return <p>Error fetching user data.</p>;
+  }
 
   return (
     <Box p={6} maxW="container.md" mx="auto">
@@ -126,10 +141,16 @@ const JobApplication = () => {
           <FormLabel>Resume (PDF)</FormLabel>
           <Input type="file" accept=".pdf" onChange={handleResumeChange} />
         </FormControl>
-        <FormControl mb={4} isRequired={coverLetterRequired}>
-          <FormLabel>Cover Letter (PDF)</FormLabel>
-          <Input type="file" accept=".pdf" onChange={handleCoverLetterChange} />
-        </FormControl>
+        {coverLetterRequired && (
+          <FormControl mb={4} isRequired>
+            <FormLabel>Cover Letter (PDF)</FormLabel>
+            <Input
+              type="file"
+              accept=".pdf"
+              onChange={handleCoverLetterChange}
+            />
+          </FormControl>
+        )}
         <Button
           type="submit"
           colorScheme="teal"

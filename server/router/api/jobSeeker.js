@@ -8,7 +8,12 @@ import {
   applyForJob,
   getApplicantsByJobId,
   getUserApplications,
+  addBookmark,
+  removeBookmark,
+  getBookmarksByUser,
 } from "../../controllers/jobSeekerController.js";
+
+import Auth from "../../middleware/auth.js";
 
 const router = Router();
 
@@ -33,5 +38,25 @@ router.get("/applicants/:id", getApplicantsByJobId);
 
 // Route to get user applications by email
 router.get("/applications/:email", getUserApplications);
+
+// Route to add a bookmark
+// router.post("/bookmark", addBookmark);
+
+router
+  .route("/bookmark")
+  .post(Auth, addBookmark);
+
+// Route to remove a bookmark
+// router.post("/unbookmark", removeBookmark);
+router
+  .route("/unbookmark")
+  .post(Auth, removeBookmark);
+
+
+// router.post('/userBookmarks', getBookmarksByUser);
+
+router
+  .route("/userBookmarks")
+  .post(Auth, getBookmarksByUser);
 
 export default router;

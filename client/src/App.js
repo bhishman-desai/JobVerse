@@ -29,6 +29,7 @@ const JobDetail = lazy(() => import("./pages/recruiter/JobDetail"));
 const JobApplication = lazy(() => import("./pages/jobSeeker/JobApplication"));
 const JobDetails = lazy(() => import("./pages/jobSeeker/JobDetails"));
 const Applications = lazy(() => import("./pages/jobSeeker/Applications"));
+const Bookmarks = lazy(() => import("./pages/jobSeeker/Bookmarks"));
 
 /* Notifications Pages */
 
@@ -99,6 +100,11 @@ function App() {
           <Route
             element={withLayout(Applications)()}
             path="/job-seeker/applications"
+          />
+
+<         Route
+            element={withLayout(Bookmarks)()}
+            path="/job-seeker/bookmarks"
           />
 
           <Route element={withLayout(Notifications)()} path="/notifications" />

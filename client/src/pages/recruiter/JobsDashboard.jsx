@@ -28,24 +28,29 @@ const JobsDashboard = () => {
   const [isMobile] = useMediaQuery('(max-width: 600px)');
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const username = await getUsername();
-        const jobData = await fetchJobs(username.userId); // Fetch jobs using API function
-        setJobs(jobData);
-      } catch (error) {
-        toast({
-          title: 'Error',
-          description: 'Failed to fetch jobs.',
-          status: 'error',
-          duration: 3000,
-          isClosable: true,
-        });
-        navigate('/login');
-      }
-    };
+    const token = localStorage.getItem('token');
+    if(token){
+      const loadData = async () => {
+        try {
+          const username = await getUsername();
+          const jobData = await fetchJobs(username.userId); // Fetch jobs using API function
+          setJobs(jobData);
+        } catch (error) {
+          toast({
+            title: 'Error',
+            description: 'Failed to fetch jobs.',
+            status: 'error',
+            duration: 3000,
+            isClosable: true,
+          });
+        }
+      };
+      loadData();
+    }
+    else{
+      navigate('/register')
+    }
 
-    loadData();
   }, [navigate, toast]);
 
   const handleDelete = async (job) => {

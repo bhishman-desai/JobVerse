@@ -123,3 +123,41 @@ export const fetchApplicationsByEmail = async (email) => {
     throw new Error("Failed to fetch applications by email.");
   }
 };
+
+export const fetchUserBookmarks = async (username) => {
+  const token = localStorage.getItem("token");
+  try {
+    const response = await axios.post(`/api/jobSeeker/userBookmarks`, 
+      {
+        username,
+      },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+      );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching bookmarks:", error);
+    throw new Error("Failed to fetch bookmarks.");
+  }
+};
+
+export const toggleBookmark = async (username, jobId, isBookmarked) => {
+  const token = localStorage.getItem("token");
+  const url = isBookmarked
+    ? '/api/jobSeeker/unbookmark'
+    : '/api/jobSeeker/bookmark';
+
+  try {
+    const response = await axios.post(url, 
+      {username, jobId},
+      {
+        headers: { Authorization: `Bearer ${token}` }
+      }
+      
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error('Failed to update bookmark status.');
+  }
+};

@@ -8,6 +8,8 @@ import { FaBell, FaUser } from 'react-icons/fa';
 import logo from '../../assets/Jobverse.jpeg';
 import { useSocketStore } from '../../store/store';
 
+import { useToast } from '@chakra-ui/react';
+
 const Navbar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selected, setSelected] = useState("");
@@ -15,13 +17,15 @@ const Navbar = () => {
   const [userRole, setUserRole] = useState(null); // State to manage user role
   const location = useLocation();
   const navigate = useNavigate();
+  const toast = useToast(); 
   const links = [
     { name: "Home", path: "/" },
     { name: "FAQ", path: "/faq" },
     { name: "Contact us", path: "/contact-us" },
     { name: "Dashboard", path: "/recruiter/dashboard", role: "recruiter" },
     { name: "Create Job", path: "/recruiter/create-job", role: "recruiter" },
-    { name: "Applications", path: "/job-seeker/applications", role: "student" }
+    { name: "Applications", path: "/job-seeker/applications", role: "student" },
+    { name: "Bookmarks", path: "/job-seeker/bookmarks", role: "student" }
   ];
 
   const newNotification = useSocketStore((state) => state.newNotification);
@@ -55,11 +59,26 @@ const Navbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('username');
     localStorage.removeItem('role');
     setIsLoggedIn(false);
     setUserRole(null);
-    navigate('/login');
+  
+    // Show toast notification
+    toast({
+      title: "Logged out",
+      description: "You have logged out successfully.",
+      status: "success",
+      duration: 2000,
+      isClosable: true,
+    });
+  
+    // Delay navigation slightly to allow toast to display
+    setTimeout(() => {
+      navigate('/');
+    }, 2500); // Adjust the delay as needed
   };
+  
 
   const renderLinks = () => {
     if (isLoggedIn) {
