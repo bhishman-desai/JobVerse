@@ -4,12 +4,14 @@ import Event from '../model/Event.js';
 import Eventapplicant from '../model/EventApplicant.js';
 import mongoose from 'mongoose';
 // Create a new event
+// Create a new event
 export const createEvent = async (req, res) => {
     const {
         eventName,
         eventDescription,
         dateTime,
-        location
+        location,
+        recruiterId  // Recruiter ID as an ObjectId
     } = req.body;
 
     try {
@@ -17,7 +19,8 @@ export const createEvent = async (req, res) => {
             eventName,
             eventDescription,
             dateTime,
-            location
+            location,
+            recruiterId
         });
 
         await newEvent.save();
@@ -30,9 +33,15 @@ export const createEvent = async (req, res) => {
 };
 
 // Get all events
+// Get all events, optionally by recruiter ID
+// Get all events, optionally by recruiter ID
 export const getAllEvents = async (req, res) => {
+    const { recruiterId } = req.query;  // Extract recruiterId from query parameters
+
     try {
-        const events = await Event.find({});
+        const query = recruiterId ? { recruiterId: mongoose.Types.ObjectId(recruiterId) } : {};  // Convert to ObjectId if provided
+
+        const events = await Event.find(query);
         res.status(200).json(events);
     } catch (err) {
         res.status(500).json({
@@ -40,6 +49,7 @@ export const getAllEvents = async (req, res) => {
         });
     }
 };
+
 
 // Get a single event by ID
 export const getEventById = async (req, res) => {
@@ -60,15 +70,16 @@ export const getEventById = async (req, res) => {
     }
 };
 
+
 // Update an event by ID
 export const updateEvent = async (req, res) => {
     const { id } = req.params;
-    const { eventName, eventDescription, dateTime, location } = req.body;
+    const { eventName, eventDescription, dateTime, location, recruiterId } = req.body;
 
     try {
         const updatedEvent = await Event.findByIdAndUpdate(
             id,
-            { eventName, eventDescription, dateTime, location },
+            { eventName, eventDescription, dateTime, location, recruiterId },
             { new: true, runValidators: true }
         );
 
@@ -84,6 +95,8 @@ export const updateEvent = async (req, res) => {
         });
     }
 };
+
+
 
 // Delete an event by ID
 export const deleteEvent = async (req, res) => {
@@ -105,6 +118,7 @@ export const deleteEvent = async (req, res) => {
         });
     }
 };
+
 
 export const Eventcandidateapply = async (req, res) => {
   const { eventId, name, email } = req.body;

@@ -22,7 +22,6 @@ export async function verifyUser(req, res, next) {
 export async function register(req, res) {
   try {
     const { username, password, profile, email, roles } = req.body;
-
     /* Check the existing user */
     const existUsername = new Promise((resolve, reject) => {
       UserModel.findOne({ username }, function (err, user) {
