@@ -6,7 +6,7 @@ import jobSeekerRoutes from "./api/jobSeeker.js";
 import userRoutes from "./api/userRoute.js";
 import SearchFunc from "./api/search/searchFunc.js";
 import notificationRoute from "./api/notificationRoute.js"
-
+import eventRoute from "./api/eventRoute.js"
 
 const router = Router();
 
@@ -18,5 +18,5 @@ router.use("/jobSeeker", jobSeekerRoutes);
 router.use("/search",SearchFunc)
 /* Author: Sivasubramanian Venkatasubramanian */
 router.use("/notifications", notificationRoute);
-
+router.use("/recruiter",eventRoute);
 export default router;
