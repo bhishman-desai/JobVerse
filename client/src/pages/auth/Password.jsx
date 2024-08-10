@@ -36,9 +36,11 @@ export default function Password() {
       });
 
       loginPromise.then((res) => {
-        const { token, username } = res.data;
+        const { token, username, email } = res.data;
+        console.log(res.data)
         localStorage.setItem("token", token);
         localStorage.setItem('username', username);
+        localStorage.setItem('email', email);
         initializeSocket(token, username);
         let role = localStorage.getItem('role');
         if (role === 'Recruiter') {

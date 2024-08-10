@@ -24,12 +24,17 @@ const JobCreation = lazy(() => import("./pages/recruiter/JobCreation"));
 const JobsDashboard = lazy(() => import("./pages/recruiter/JobsDashboard"));
 const UpdateJob = lazy(() => import("./pages/recruiter/UpdateJob"));
 const JobDetail = lazy(() => import("./pages/recruiter/JobDetail"));
+const CreateEvent = lazy(()=> import("./pages/recruiter/EventCreation"));
+const EventDashboard = lazy(()=> import("./pages/recruiter/EventDashboard"));
+const EventUpdate = lazy(()=> import("./pages/recruiter/UpdateEvent"));
+
 
 /* Job Seeker Pages */
 const JobApplication = lazy(() => import("./pages/jobSeeker/JobApplication"));
 const JobDetails = lazy(() => import("./pages/jobSeeker/JobDetails"));
 const Applications = lazy(() => import("./pages/jobSeeker/Applications"));
 const Bookmarks = lazy(() => import("./pages/jobSeeker/Bookmarks"));
+const viewEvents = lazy(()=> import("./pages/jobSeeker/ViewEvents"));
 
 /* Notifications Pages */
 
@@ -88,6 +93,21 @@ function App() {
             path="/recruiter/update-job/:id"
           />
 
+          <Route
+            element={withLayout(CreateEvent)()}
+            path="/recruiter/create-event"
+          />
+
+          <Route
+            element={withLayout(EventDashboard)()}
+            path="/recruiter/events-dashboard"
+          />
+
+          <Route
+            element={withLayout(EventUpdate)()}
+            path="/recruiter/update-event/:eventId"
+          />
+
           {/* Job Seeker Routes */}
           <Route
             element={withLayout(JobApplication)()}
@@ -102,9 +122,14 @@ function App() {
             path="/job-seeker/applications"
           />
 
-<         Route
+          <Route
             element={withLayout(Bookmarks)()}
             path="/job-seeker/bookmarks"
+          />
+
+          <Route
+            element={withLayout(viewEvents)()}
+            path="/job-seeker/view-events"
           />
 
           <Route element={withLayout(Notifications)()} path="/notifications" />

@@ -122,7 +122,7 @@ export const deleteEvent = async (req, res) => {
 
 export const Eventcandidateapply = async (req, res) => {
   const { eventId, name, email } = req.body;
-
+    console.log(req)
   try {
      
       const existingApplication = await Eventapplicant.findOne({ eventId, email });
@@ -151,32 +151,29 @@ export const Eventcandidateapply = async (req, res) => {
 
 
 export const getApplicantsByEventId = async (req, res) => {
-  const { id: eventId } = req.params;
-
-  if (!eventId) {
-    return res.status(400).json({
-      message: 'Event ID is required'
-    });
-  }
-
-  try {
-    
-    const objectId = mongoose.Types.ObjectId(eventId);
-
-
-    const applicants = await Eventapplicant.find({ eventId: objectId });
-
-    if (applicants.length === 0) {
-      return res.status(404).json({
-        message: 'No applicants found for this event'
+    const { id: eventId } = req.params;
+  
+    if (!eventId) {
+      return res.status(400).json({
+        message: 'Event ID is required'
       });
     }
-    res.status(200).json(applicants);
-  } catch (err) {
-    console.error('Error fetching applicants:', err); // Log full error object
-    res.status(500).json({
-      message: 'Internal Server Error',
-      error: err.message // Include error message in response for debugging
-    });
-  }
-};
+  
+    try {
+      const objectId = mongoose.Types.ObjectId(eventId);
+  
+      const applicants = await Eventapplicant.find({ eventId: objectId });
+
+      if (applicants.length === 0) {
+        return res.status(200).json([]);
+      }
+  
+      res.status(200).json(applicants);
+    } catch (err) {
+      console.error('Error fetching applicants:', err);
+      res.status(500).json({
+        message: 'Internal Server Error',
+        error: err.message 
+      });
+    }
+  };
