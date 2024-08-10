@@ -31,11 +31,11 @@ router
   .delete(Auth, controller.deleteEvent);
   
 router
-  .route('/getapplicants/:id')
+  .route('/getApplicantsByEventId/:id')
   .get(Auth, controller.getApplicantsByEventId);
 
 router
-  .route('/events/apply')
+  .route('/joinEvent')
   .post(Auth, controller.Eventcandidateapply);
 
 export default router;

@@ -105,6 +105,7 @@ export async function login(req, res) {
             return res.status(200).send({
               message: "Login Successful!",
               username: user.username,
+              email:user.email,
               token,
             });
           })

@@ -16,7 +16,6 @@ router.use("/recruiter", RecjobMgmt);
 router.use("/users", userRoutes);
 router.use("/jobSeeker", jobSeekerRoutes);
 router.use("/search",SearchFunc)
-/* Author: Sivasubramanian Venkatasubramanian */
 router.use("/notifications", notificationRoute);
-router.use("/recruiter",eventRoute);
+router.use("/event",eventRoute);
 export default router;
