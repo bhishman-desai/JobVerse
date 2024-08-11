@@ -1,4 +1,4 @@
-# Jobverse: Bridging The Gap Between Job Seekers and Employers (Project proposal)
+# Jobverse: Bridging The Gap Between Job Seekers and Employers
 
 
 * *Date Created*: 30 AUG 2024
