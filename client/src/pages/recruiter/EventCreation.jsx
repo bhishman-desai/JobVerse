@@ -111,10 +111,10 @@ function EventCreation() {
 
     return (
         <>
-            <Heading as='h2' size='xl' align='center' mb='4'>
+            <Heading as='h2' size='xl' align='center' mb='4' mt='4'>
                 Create an Event
             </Heading>
-            <Box maxWidth='600px' mx='auto'>
+            <Box maxWidth='600px' mx='auto' padding={'20px'}>
                 <form onSubmit={handleSubmit}>
                     <FormControl isRequired isInvalid={!!eventNameError}>
                         <FormLabel>Event Name:</FormLabel>
@@ -143,6 +143,7 @@ function EventCreation() {
                                 onChange={(date) => setDate(date)}
                                 dateFormat='yyyy-MM-dd'
                                 customInput={<Input />}
+                                minDate={new Date(Date.now() + 86400000)}
                             />
                             <FormErrorMessage>{dateError}</FormErrorMessage>
                         </FormControl>

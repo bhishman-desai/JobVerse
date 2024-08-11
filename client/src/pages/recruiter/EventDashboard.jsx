@@ -143,8 +143,6 @@ const EventsDashboard = () => {
               {events.map((event) => (
                 <Tr
                   key={event._id}
-                  _hover={{ bg: 'gray.100', cursor: 'pointer' }}
-                  onClick={() => navigate(`/recruiter/event/${event._id}`)}
                 >
                   <Td>{event.eventName}</Td>
                   <Td>{event.eventDescription}</Td>
@@ -194,7 +192,7 @@ const EventsDashboard = () => {
       <Modal isOpen={isModalOpen} onClose={closeModal} size='xl'>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Applicants for Event ID: {selectedEventId}</ModalHeader>
+          <ModalHeader>Applicants for Event</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             {applicants.length === 0 ? (
