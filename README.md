@@ -1,8 +1,8 @@
 # Jobverse: Bridging The Gap Between Job Seekers and Employers
 
 
-* *Date Created*: 30 AUG 2024
-* *Last Modification Date*: 30 AUG 2024
+* *Date Created*: 10 AUG 2024
+* *Last Modification Date*: 10 AUG 2024
 * *Lab URL*: <https://job-verse.vercel.app/>
 * *Git URL*: <https://git.cs.dal.ca/venkatasub/csci-4177-5709-grp-11>
 
