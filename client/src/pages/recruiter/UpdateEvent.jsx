@@ -117,6 +117,7 @@ function UpdateEvent() {
                 selected={date}
                 onChange={(date) => setDate(date)}
                 dateFormat="yyyy-MM-dd"
+                minDate={new Date(Date.now() + 86400000)}
                 customInput={<Input />}
               />
             </FormControl>
@@ -131,6 +132,7 @@ function UpdateEvent() {
                 timeIntervals={15}
                 timeCaption="Time"
                 dateFormat="HH:mm"
+                minDate={new Date(Date.now() + 86400000)}
                 customInput={<Input />}
               />
             </FormControl>

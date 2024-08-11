@@ -82,7 +82,6 @@ const ViewEvents = () => {
               <Text fontSize="lg" fontWeight="bold">
                 {event.eventName}
               </Text>
-              <Text>{event.recruiterId}</Text>
               <Text>
                 <strong>Location:</strong> {event.location}
               </Text>
